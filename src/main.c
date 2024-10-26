@@ -317,7 +317,7 @@ int main(void)
                                 }
                             } else { // Unexpected case
                                 // Output Warning message
-                                dprintf_("# Warning: Unexpected case (CCU=%d SCU=%d TCU=%d).\n", AvhControlStatus, AvhStatus, AvhControl);
+                                dprintf_("# Warning: Unexpected case (Status=%d AVH=%d AVHControl=%d).\n", AvhControlStatus, AvhStatus, AvhControl);
                             }
                         }
                         PreviousCanId = rx_msg_header.StdId;
