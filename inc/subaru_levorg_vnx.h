@@ -38,17 +38,9 @@ enum avh_control_status {
 #define AVH_OFF false
 #define AVH_ON  true
 
-/*
-enum avh_status {
-    AVH_OFF,
-    AVH_ON
-};
-*/
-
 // STATUS
 enum status {
     PROCESSING,
-    CANCELLED,
     FAILED,
     SUCCEEDED
 };
@@ -72,7 +64,6 @@ extern enum debug_mode DebugMode;
 
 // for Calculate Check Sum
 #define SUM_CHECK_ADDER (-0x3F)
-
 
 #define MAX_RETRY 2
 
