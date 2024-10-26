@@ -96,8 +96,8 @@ void transmit_can_frame(uint8_t* rx_msg_data, bool avh){
 
     if(avh){
         tx_msg_data[2] = rx_msg_data[2] | 0x02; // Introduce auto behicle hold bit on
-        tx_msg_data[2] = rx_msg_data[2] | 0x01; // Remove auto behicle hold bit on
     } else {
+        tx_msg_data[2] = rx_msg_data[2] | 0x01; // Remove auto behicle hold bit on
     }
         
     tx_msg_data[3] = rx_msg_data[3];
