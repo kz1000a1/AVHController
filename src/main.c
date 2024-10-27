@@ -173,7 +173,7 @@ int main(void)
         if(is_can_msg_pending(CAN_RX_FIFO0)){
             can_rx(&rx_msg_header, rx_msg_data);
 
-            if(DebugMode == CANDUMP || (DebugMode == DEBUG && (rx_msg_header.StdId == CAN_ID_SHIFT || rx_msg_header.StdId == CAN_ID_AVH_STATUS || rx_msg_header.StdId == CAN_ID_AVH_CONTROL || rx_msg_header.StdId == CAN_ID_SPEED || rx_msg_header.StdId == CAN_ID_BRAKE || rx_msg_header.StdId == CAN_ID_ACCEL))){
+            if(DebugMode == CANDUMP || (DebugMode == DEBUG && (rx_msg_header.StdId == CAN_ID_SHIFT || rx_msg_header.StdId == CAN_ID_AVH_STATUS || rx_msg_header.StdId == CAN_ID_AVH_CONTROL || rx_msg_header.StdId == CAN_ID_SPEED || rx_msg_header.StdId == CAN_ID_ACCEL))){
                 print_rx_frame(&rx_msg_header, rx_msg_data);
             }
             
