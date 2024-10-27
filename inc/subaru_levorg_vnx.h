@@ -57,15 +57,10 @@ enum debug_mode {
 };
 
 // SHIFT
-#define P 4
-/*
-enum shift {
-    D = 1,
-    N,
-    R,
-    P
-};
-*/
+#define SHIFT_D 1
+#define SHIFT_N 2
+#define SHIFT_R 3
+#define SHIFT_P 4
 
 extern enum debug_mode DebugMode;
 
