@@ -227,7 +227,7 @@ int main(void)
                         dprintf_("# Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                         dprintf_("# Accel: %d.%02d%\n", (int)Accel, (int)(Accel * 100) % 100);
                         dprintf_("# Brake: %d.%02d(%d.%02d)%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
-                        dprintf_("# Gear: %d(4:D,3:N,2:R,1:P)\n", Gear);
+                        dprintf_("# Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
                         dprintf_("# ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                         dprintf_("# AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
 
