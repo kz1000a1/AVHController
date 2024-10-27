@@ -25,7 +25,7 @@
 #define CAN_ID_ACCEL       0x040
 
 // Brake Pressure to Start AVH
-#define BRAKE_HIGH 50
+#define BRAKE_HIGH 80
 
 // AVH CONTROL STATUS
 enum avh_control_status {
