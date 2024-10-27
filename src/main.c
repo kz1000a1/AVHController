@@ -143,6 +143,7 @@ int main(void)
     static enum avh_control_status AvhControlStatus = ENGINE_STOP;
     static bool AvhStatus = AVH_OFF;
     static bool AvhControl = AVH_OFF;
+    static bool ParkBrake = BRAKE_ON;
     static enum status Status = PROCESSING;
     static enum shift Gear = P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
@@ -190,11 +191,16 @@ int main(void)
                         if(100 < Brake){
                             Brake = 100;
                         }
+                        if(rx_msg_data[7] & 0xf0 == 0x50){
+                            ParkBrake = BRAKE_ON;
+                        } else {
+                            ParkBrake = BRAKE_OFF;
+                        }                            
 
                         switch (AvhStatus){
                             case AVH_ON:
                                 if(AvhControl == AVH_ON){
-                                    if(Gear != D || Speed != 0.0 || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                    if(Gear != D || ParkBrake == BRAKE_ON || Speed != 0.0 || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
@@ -206,7 +212,7 @@ int main(void)
 
                             case AVH_OFF:
                                 if(AvhControl == AVH_OFF){
-                                    if(Gear == D && Speed == 0.0 && Accel == 0.0 && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= Brake){
+                                    if(Gear == D && ParkBrake == BRAKE_OFF && Speed == 0.0 && Accel == 0.0 && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= Brake){
                                         AvhControl = AVH_ON;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
@@ -217,10 +223,9 @@ int main(void)
                                 break;
                         }
 
-                        dprintf_("# Speed: %d.%02d(%d.%02d) km/h\n", Speed, (int)(Speed * 100) % 100, PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                        dprintf_("# Brake: %d.%02d(%d.%02d) %\n", Brake, (int)(Brake * 100) % 100, PrevBrake, (int)(PrevBrake * 100) % 100);
-                        dprintf_("# Accel: %d.%02d %\n", Accel, (int)(Accel * 100) % 100);
-                        dprintf_("# Gear: %d(4:D,3:N,2:R,1:P) AVH: %d(0:OFF,1:ON)=>%d\n", Gear, AvhStatus, AvhControl);
+                        dprintf_("# Speed: %d.%02d(%d.%02d)km/h / Gear: %d(4:D,3:N,2:R,1:P)\n", Speed, (int)(Speed * 100) % 100, PrevSpeed, (int)(PrevSpeed * 100) % 100, Gear);
+                        dprintf_("# Brake: %d.%02d(%d.%02d)% / Accel: %d.%02d%\n", Brake, (int)(Brake * 100) % 100, PrevBrake, (int)(PrevBrake * 100) % 100, Accel, (int)(Accel * 100) % 100);
+                        dprintf_("# ParkBrake : %d(0:OFF,1:ON) / AVH: %d(0:OFF,1:ON)=>%d\n", ParkBrake, AvhStatus, AvhControl);
 
                         PreviousCanId = rx_msg_header.StdId;
                         break;
@@ -272,6 +277,7 @@ int main(void)
                         if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
                             AvhStatus = AVH_OFF;
                             AvhControl = AVH_OFF;
+                            static bool ParkBrake = BRAKE_ON;
                             AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
                             led_blink(Status);
