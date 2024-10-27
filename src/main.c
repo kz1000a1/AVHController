@@ -191,7 +191,7 @@ int main(void)
                         if(100 < Brake){
                             Brake = 100;
                         }
-                        if(rx_msg_data[7] & 0xf0 == 0x50){
+                        if((rx_msg_data[7] & 0xf0) == 0x50){
                             ParkBrake = BRAKE_ON;
                         } else {
                             ParkBrake = BRAKE_OFF;
@@ -281,7 +281,7 @@ int main(void)
                         if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
                             AvhStatus = AVH_OFF;
                             AvhControl = AVH_OFF;
-                            static bool ParkBrake = BRAKE_ON;
+                            ParkBrake = BRAKE_ON;
                             AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
                             led_blink(Status);
