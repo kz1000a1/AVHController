@@ -304,7 +304,7 @@ int main(void)
                                 // 1027 dprintf_("# Information: Send Frame Speed=%d R=%d.\n", (int)Speed, R_Gear);
                                 if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
                                     // Output Warning message
-                                    // 1027 dprintf_("# Warning: Enable or disable auto vehicle hold failed\n");
+                                    dprintf_("# Warning: Enable or disable auto vehicle hold failed\n");
                                     Status = FAILED;
                                     led_blink(Status);
                                 } else {
