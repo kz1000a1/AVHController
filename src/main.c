@@ -145,7 +145,7 @@ int main(void)
     static bool AvhControl = AVH_OFF;
     static bool ParkBrake = BRAKE_ON;
     static enum status Status = PROCESSING;
-    static enum shift Gear = P;
+    static uint8_t Gear = P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t Retry = 0;
     static float Speed = 0;
@@ -224,9 +224,12 @@ int main(void)
                                 break;
                         }
 
-                        dprintf_("# Speed: %d.%02d(%d.%02d)km/h / Gear: %d(4:D,3:N,2:R,1:P)\n", Speed, (int)(Speed * 100) % 100, PrevSpeed, (int)(PrevSpeed * 100) % 100, Gear);
-                        dprintf_("# Brake: %d.%02d(%d.%02d)% / Accel: %d.%02d%\n", Brake, (int)(Brake * 100) % 100, PrevBrake, (int)(PrevBrake * 100) % 100, Accel, (int)(Accel * 100) % 100);
-                        dprintf_("# ParkBrake : %d(0:OFF,1:ON) / AVH: %d(0:OFF,1:ON)=>%d\n", ParkBrake, AvhStatus, AvhControl);
+                        dprintf_("# Speed: %d.%02d(%d.%02d)km/h\n", Speed, (int)(Speed * 100) % 100, PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                        dprintf_("# Accel: %d.%02d%\n", Accel, (int)(Accel * 100) % 100);
+                        dprintf_("# Brake: %d.%02d(%d.%02d)%\n", Brake, (int)(Brake * 100) % 100, PrevBrake, (int)(PrevBrake * 100) % 100);
+                        dprintf_("# Gear: %d(4:D,3:N,2:R,1:P)\n", Gear);
+                        dprintf_("# ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+                        dprintf_("# AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
 
                         PreviousCanId = rx_msg_header.StdId;
                         break;
