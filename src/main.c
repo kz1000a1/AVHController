@@ -200,7 +200,8 @@ int main(void)
                         switch (AvhStatus){
                             case AVH_ON:
                                 if(AvhControl == AVH_ON){
-                                    if(Gear != D || ParkBrake == BRAKE_ON || Speed != 0.0 || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                    // if(Gear != D || ParkBrake == BRAKE_ON || Speed != 0.0 || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                    if(Gear != D || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
