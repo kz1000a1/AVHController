@@ -145,7 +145,7 @@ int main(void)
     static bool AvhControl = AVH_OFF;
     static bool ParkBrake = BRAKE_ON;
     static enum status Status = PROCESSING;
-    static uint8_t Gear = P;
+    static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t Retry = 0;
     static float Speed = 0;
@@ -200,8 +200,8 @@ int main(void)
                         switch (AvhStatus){
                             case AVH_ON:
                                 if(AvhControl == AVH_ON){
-                                    // if(Gear != D || ParkBrake == BRAKE_ON || Speed != 0.0 || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
-                                    if(Gear != D || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                    // if(Gear != SHIFT_D || ParkBrake == BRAKE_ON || Speed != 0.0 || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                    if(Gear != SHIFT_D || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
@@ -213,7 +213,7 @@ int main(void)
 
                             case AVH_OFF:
                                 if(AvhControl == AVH_OFF){
-                                    if(Gear == D && ParkBrake == BRAKE_OFF && Speed == 0.0 && Accel == 0.0 && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= Brake){
+                                    if(Gear == SHIFT_D && ParkBrake == BRAKE_OFF && Speed == 0.0 && Accel == 0.0 && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= Brake){
                                         AvhControl = AVH_ON;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
@@ -286,7 +286,7 @@ int main(void)
                             Status = PROCESSING;
                             led_blink(Status);
                             Retry = 0;
-                            Gear = P;
+                            Gear = SHIFT_P;
                             Speed = 0;
                             PrevSpeed = 0;
                             Brake = 0;
