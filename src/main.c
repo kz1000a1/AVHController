@@ -1,4 +1,4 @@
-ｍｋ//
+//
 // AVH(Auto Vehicle Hold) auto introduce and remove system firmware for SUBARU Levorg VN5
 //
 
@@ -247,7 +247,7 @@ int main(void)
                         break;
 
                     case CAN_ID_ACCEL:
-                        Accel = bytesToUint(rx_msg_data, 4, 1) / 2.55;
+                        Accel = rx_msg_data[4] / 2.55;
                         PreviousCanId = rx_msg_header.StdId;
                         break;
 
