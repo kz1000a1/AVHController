@@ -164,6 +164,7 @@ int main(void)
 #endif
 
     can_enable();
+    led_blink((AvhStatus << 1) + AvhControl);
 
     while(1){
 #ifdef DEBUG_MODE
@@ -206,8 +207,9 @@ int main(void)
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
-                                            led_blink(Status);
+                                            // led_blink(Status);
                                         }
+                                        led_blink((AvhStatus << 1) + AvhControl);
                                     }
                                 }
                                 break;
@@ -218,8 +220,9 @@ int main(void)
                                         AvhControl = AVH_ON;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
-                                            led_blink(Status);
+                                            // led_blink(Status);
                                         }
+                                        led_blink((AvhStatus << 1) + AvhControl);
                                     }
                                 }
                                 break;
@@ -259,7 +262,7 @@ int main(void)
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
-                                led_blink(Status);
+                                // led_blink(Status);
                             }
                         } else {
                             AvhStatus = AVH_OFF;
@@ -271,9 +274,10 @@ int main(void)
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
-                                led_blink(Status);
+                                // led_blink(Status);
                             }
                         }
+                        led_blink((AvhStatus << 1) + AvhControl);
 
                         // PreviousCanId = rx_msg_header.StdId;
                         break;
@@ -285,7 +289,7 @@ int main(void)
                             ParkBrake = BRAKE_ON;
                             AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
-                            led_blink(Status);
+                            // led_blink(Status);
                             Retry = 0;
                             Gear = SHIFT_P;
                             Speed = 0;
@@ -293,6 +297,7 @@ int main(void)
                             Brake = 0;
                             PrevBrake = 0;
                             Accel = 0;
+                            led_blink((AvhStatus << 1) + AvhControl);
                             // Output Information message
                             // 1027 dprintf_("# Information: ENGINE STOP.\n");
                         } else if(Status == PROCESSING){
@@ -310,10 +315,10 @@ int main(void)
                                     // Output Warning message
                                     dprintf_("# Warning: Enable or disable auto vehicle hold failed\n");
                                     Status = FAILED;
-                                    led_blink(Status);
+                                    // led_blink(Status);
                                 } else {
                                     Retry++;
-                                    led_blink(Retry);
+                                    // led_blink(Retry);
                                     /* for(int i = 0;i < 5;i++){
                                         HAL_Delay(50);
                                         transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
@@ -326,7 +331,7 @@ int main(void)
                                     }
                                     rx_msg_header.StdId = CAN_ID_SHIFT;
                                     // AvhControlStatus = NOT_READY;
-                                    led_blink(Status);
+                                    // led_blink(Status);
                                 }
                             } else { // Unexpected case
                                 // Output Warning message
