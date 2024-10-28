@@ -258,7 +258,7 @@ int main(void)
                             // 1027 dprintf_("# Information: Auto vehicle hold On.\n");
                             if(Retry != 0 && Status == PROCESSING && AvhControl == AVH_ON){
                                 // Output Information message
-                                dprintf_("# Information: Enable auto vehicle hold succeeded.\n");
+                                dprintf_("# Enable AVH succeeded. Retry: %d\n", Retry);
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
@@ -270,7 +270,7 @@ int main(void)
                             // 1027 dprintf_("# Information: Auto vehicle hold Off.\n");
                             if(Retry != 0 && Status == PROCESSING && AvhControl == AVH_OFF){
                                 // Output Information message
-                                dprintf_("# Information: Disble auto vehicle hold succeeded.\n");
+                                dprintf_("# Disable AVH succeeded. Retry: %d\n", Retry);
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
