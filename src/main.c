@@ -1,4 +1,4 @@
-//
+ｍｋ//
 // AVH(Auto Vehicle Hold) auto introduce and remove system firmware for SUBARU Levorg VN5
 //
 
@@ -21,7 +21,7 @@
     enum debug_mode DebugMode = NORMAL;
 #endif
 
-
+/*
 uint16_t bytesToUint(uint8_t raw[], int shift, int size){
     uint16_t result = 0;
 
@@ -34,6 +34,7 @@ uint16_t bytesToUint(uint8_t raw[], int shift, int size){
 
     return result;
 }
+*/
 
 void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
     uint32_t CurrentTime;
@@ -52,8 +53,8 @@ void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
     } else { // Remote Frame
         printf_("(%d.%03d000) can0 %03X#R%d\n", CurrentTime / 1000,
                                                 CurrentTime % 1000,
-                                                rx_msg_header->StdId,
-                                                rx_msg_header->DLC);
+                                                rx_msg_header->StdId,ｍｋ
+                                                rx_msg_header->DLC);ｍｋ
     }
 }
 
@@ -187,7 +188,7 @@ int main(void)
                         PrevSpeed = Speed;
                         PrevBrake = Brake;
                         Speed = (rx_msg_data[2] + ((rx_msg_data[3] & 0x1f) << 8)) * 0.05625;
-                        Brake = bytesToUint(rx_msg_data, 5, 1) / 0.7;
+                        Brake = rx_msg_data[5] / 0.7;
                         if(100 < Brake){
                             Brake = 100;
                         }
