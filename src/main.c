@@ -53,8 +53,8 @@ void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
     } else { // Remote Frame
         printf_("(%d.%03d000) can0 %03X#R%d\n", CurrentTime / 1000,
                                                 CurrentTime % 1000,
-                                                rx_msg_header->StdId,ｍｋ
-                                                rx_msg_header->DLC);ｍｋ
+                                                rx_msg_header->StdId,
+                                                rx_msg_header->DLC);
     }
 }
 
