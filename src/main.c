@@ -299,7 +299,7 @@ int main(void)
                                 // 1027 dprintf_("# Information: READY.\n");
                                 // 1027 dprintf_("# Information: Status (CCU=%d SCU=%d TCU=%d R=%d).\n", AvhControlStatus, AvhStatus, ShiftStatus, R_Gear);
                             // } else if(AvhStatus == AVH_OFF && (! R_Gear) || (AvhStatus == AVH_ON && R_Gear)){ // Transmit message for Enable or disable auto vehicle hold
-                            } else if(AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
+                            } else if((AvhStatus != AvhControl) && (rx_msg_data[2] & 0x03 == 0x0)) { // Transmit message for Enable or disable auto vehicle hold
                                 // Output Information message
                                 // 1027 dprintf_("# Information: Send Frame Speed=%d R=%d.\n", (int)Speed, R_Gear);
                                 if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
