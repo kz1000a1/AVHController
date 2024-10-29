@@ -193,11 +193,14 @@ int main(void)
                         if(100 < Brake){
                             Brake = 100;
                         }
+
+                        /*
                         if((rx_msg_data[7] & 0xf0) == 0x50){
                             ParkBrake = BRAKE_ON;
                         } else {
                             ParkBrake = BRAKE_OFF;
-                        }                            
+                        } */
+                        ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
 
                         switch (AvhStatus){
                             case AVH_ON:
@@ -252,32 +255,20 @@ int main(void)
                         break;
 
                     case CAN_ID_AVH_STATUS:
-                        if(rx_msg_data[5] & 0x20){
-                            AvhStatus = AVH_ON;
+                        if(((rx_msg_data[5] & 0x20) == 0x20) ^ AvhStatus){
+                            AvhStatus = !AvhStatus;
                             // Output Information message
                             // 1027 dprintf_("# Information: Auto vehicle hold On.\n");
-                            if(Retry != 0 && Status == PROCESSING && AvhControl == AVH_ON){
+                            if(Retry != 0 && Status == PROCESSING && AvhControl == AvhStatus){
                                 // Output Information message
-                                dprintf_("# Enable AVH succeeded. Retry: %d\n", Retry);
+                                dprintf_("# AVH %d(1:ON,0:OFF) succeeded. Retry: %d\n", AvhStatus, Retry);
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
                                 // led_blink(Status);
                             }
-                        } else {
-                            AvhStatus = AVH_OFF;
-                            // Output Information message
-                            // 1027 dprintf_("# Information: Auto vehicle hold Off.\n");
-                            if(Retry != 0 && Status == PROCESSING && AvhControl == AVH_OFF){
-                                // Output Information message
-                                dprintf_("# Disable AVH succeeded. Retry: %d\n", Retry);
-                                Retry = 0;
-                                Status = SUCCEEDED;
-                                AvhControlStatus = READY;
-                                // led_blink(Status);
-                            }
+                            led_blink((AvhStatus << 1) + AvhControl);
                         }
-                        led_blink((AvhStatus << 1) + AvhControl);
 
                         // PreviousCanId = rx_msg_header.StdId;
                         break;
