@@ -175,7 +175,8 @@ int main(void)
         if(is_can_msg_pending(CAN_RX_FIFO0)){
             can_rx(&rx_msg_header, rx_msg_data);
 
-            if(DebugMode == CANDUMP || (DebugMode == DEBUG && (rx_msg_header.StdId == CAN_ID_SHIFT || rx_msg_header.StdId == CAN_ID_AVH_STATUS || rx_msg_header.StdId == CAN_ID_AVH_CONTROL || rx_msg_header.StdId == CAN_ID_SPEED || rx_msg_header.StdId == CAN_ID_ACCEL))){
+            // if(DebugMode == CANDUMP || (DebugMode == DEBUG && (rx_msg_header.StdId == CAN_ID_SHIFT || rx_msg_header.StdId == CAN_ID_AVH_STATUS || rx_msg_header.StdId == CAN_ID_AVH_CONTROL || rx_msg_header.StdId == CAN_ID_SPEED || rx_msg_header.StdId == CAN_ID_ACCEL))){
+            if(DebugMode == CANDUMP){
                 print_rx_frame(&rx_msg_header, rx_msg_data);
             }
             
@@ -213,6 +214,12 @@ int main(void)
                                             // led_blink(Status);
                                         }
                                         led_blink((AvhStatus << 1) + AvhControl);
+                                        dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                                        dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
+                                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
+                                        dprintf_("# DEBUG Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
+                                        dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+                                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
                                     }
                                 }
                                 break;
@@ -226,17 +233,25 @@ int main(void)
                                             // led_blink(Status);
                                         }
                                         led_blink((AvhStatus << 1) + AvhControl);
+                                        dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                                        dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
+                                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
+                                        dprintf_("# DEBUG Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
+                                        dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+                                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
                                     }
                                 }
                                 break;
                         }
 
+                        /*
                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                         dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
                         dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
                         dprintf_("# DEBUG Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
+                        */
 
                         PreviousCanId = rx_msg_header.StdId;
                         break;
