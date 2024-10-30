@@ -38,6 +38,10 @@ enum avh_control_status {
 #define AVH_OFF false
 #define AVH_ON  true
 
+// AVH HOLD STATUS
+#define HOLD_OFF false
+#define HOLD_ON  true
+
 // PARKING BRAKE
 #define BRAKE_OFF false
 #define BRAKE_ON  true
