@@ -143,6 +143,7 @@ int main(void)
 
     static enum avh_control_status AvhControlStatus = ENGINE_STOP;
     static bool AvhStatus = AVH_OFF;
+    static bool AvhHold = HOLD_OFF;
     static bool AvhControl = AVH_OFF;
     static bool ParkBrake = BRAKE_ON;
     static enum status Status = PROCESSING;
@@ -206,8 +207,7 @@ int main(void)
                         switch (AvhStatus){
                             case AVH_ON:
                                 if(AvhControl == AVH_ON){
-                                    // if(Gear != SHIFT_D || ParkBrake == BRAKE_ON || Speed != 0.0 || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
-                                    if((Gear != SHIFT_D && Brake != 0.0) || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                    if((Gear != SHIFT_D && (Brake != 0.0 || AvhHold == HOLD_OFF) || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
@@ -217,9 +217,9 @@ int main(void)
                                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                         dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
                                         dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
-                                        dprintf_("# DEBUG Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
+                                        dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
                                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
+                                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
                                     }
                                 }
                                 break;
@@ -236,9 +236,9 @@ int main(void)
                                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                         dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
                                         dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
-                                        dprintf_("# DEBUG Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
+                                        dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
                                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
+                                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
                                     }
                                 }
                                 break;
@@ -250,10 +250,10 @@ int main(void)
                         dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
                         dprintf_("# DEBUG Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
+                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
                         */
 
-                        PreviousCanId = rx_msg_header.StdId;
+                        PreviousCanId = rx_msg_header.StdId;AvhHold
                         break;
 
                     case CAN_ID_SHIFT:
@@ -270,6 +270,7 @@ int main(void)
                         break;
 
                     case CAN_ID_AVH_STATUS:
+                        AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
                         if(((rx_msg_data[5] & 0x20) == 0x20) ^ AvhStatus){
                             AvhStatus = !AvhStatus;
                             // Output Information message
@@ -291,6 +292,7 @@ int main(void)
                     case CAN_ID_AVH_CONTROL:
                         if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
                             AvhStatus = AVH_OFF;
+                            AvhHold = HOLD_OFF;
                             AvhControl = AVH_OFF;
                             ParkBrake = BRAKE_ON;
                             AvhControlStatus = ENGINE_STOP;
