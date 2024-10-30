@@ -231,12 +231,12 @@ int main(void)
                                 break;
                         }
 
-                        dprintf_("# Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                        dprintf_("# Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                        dprintf_("# Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
-                        dprintf_("# Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
-                        dprintf_("# ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                        dprintf_("# AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
+                        dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                        dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
+                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
+                        dprintf_("# DEBUG Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
+                        dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d\n", AvhStatus, AvhControl);
 
                         PreviousCanId = rx_msg_header.StdId;
                         break;
@@ -261,7 +261,7 @@ int main(void)
                             // 1027 dprintf_("# Information: Auto vehicle hold On.\n");
                             if(Retry != 0 && Status == PROCESSING && AvhControl == AvhStatus){
                                 // Output Information message
-                                dprintf_("# AVH %d(1:ON,0:OFF) succeeded. Retry: %d\n", AvhStatus, Retry);
+                                dprintf_("# INFO AVH %d(1:ON,0:OFF) succeeded. Retry: %d\n", AvhStatus, Retry);
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
@@ -294,6 +294,7 @@ int main(void)
                         } else {
                             if((rx_msg_data[2] & 0x03) == 0x0){
                                 Status = CANCELLED;
+                                dprintf_("# INFO AVH control cancelled.\n)"
                             }
                             if(Status == PROCESSING){
                                 switch(AvhControlStatus){
@@ -306,7 +307,7 @@ int main(void)
                                         if(AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
                                             if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
                                                 // Output Warning message
-                                                dprintf_("# Warning: Enable or disable auto vehicle hold failed\n");
+                                                dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
                                                 Status = FAILED;
                                                 // led_blink(Status);
                                             } else {
