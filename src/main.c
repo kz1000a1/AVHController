@@ -291,42 +291,45 @@ int main(void)
                             led_blink((AvhStatus << 1) + AvhControl);
                             // Output Information message
                             // 1027 dprintf_("# Information: ENGINE STOP.\n");
-                        } else if(Status == PROCESSING){
-                            if(AvhControlStatus == NOT_READY || AvhControlStatus == ENGINE_STOP || (AvhStatus == AvhControl)){
-                                // 1027 dprintf_("# Information: Status (CCU=%d SCU=%d TCU=%d R=%d).\n", AvhControlStatus, AvhStatus, ShiftStatus, R_Gear);
-                                AvhControlStatus = READY;
-                                // Output Information message
-                                // 1027 dprintf_("# Information: READY.\n");
-                                // 1027 dprintf_("# Information: Status (CCU=%d SCU=%d TCU=%d R=%d).\n", AvhControlStatus, AvhStatus, ShiftStatus, R_Gear);
-                            // } else if(AvhStatus == AVH_OFF && (! R_Gear) || (AvhStatus == AVH_ON && R_Gear)){ // Transmit message for Enable or disable auto vehicle hold
-                            } else if((AvhStatus != AvhControl) && ((rx_msg_data[2] & 0x03) == 0x0)) { // Transmit message for Enable or disable auto vehicle hold
-                                // Output Information message
-                                // 1027 dprintf_("# Information: Send Frame Speed=%d R=%d.\n", (int)Speed, R_Gear);
-                                if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
-                                    // Output Warning message
-                                    dprintf_("# Warning: Enable or disable auto vehicle hold failed\n");
-                                    Status = FAILED;
-                                    // led_blink(Status);
-                                } else {
-                                    Retry++;
-                                    // led_blink(Retry);
-                                    /* for(int i = 0;i < 5;i++){
-                                        HAL_Delay(50);
-                                        transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
-                                    } */
-                                    HAL_Delay(50);
-                                    transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
-                                    // Discard message(s) that received during HAL_delay()
-                                    while(is_can_msg_pending(CAN_RX_FIFO0)){
-                                        can_rx(&rx_msg_header, rx_msg_data);
+                        } else {
+                            if((rx_msg_data[2] & 0x03) == 0x0){
+                                Status = CANCELLED;
+                            }
+                            if(Status == PROCESSING){
+                                switch(AvhControlStatus){
+                                    case NOT_READY:
+                                    case ENGINE_STOP:
+                                        AvhControlStatus = READY;
+                                        break;
+
+                                    case READY:
+                                        if(AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
+                                            if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
+                                                // Output Warning message
+                                                dprintf_("# Warning: Enable or disable auto vehicle hold failed\n");
+                                                Status = FAILED;
+                                                // led_blink(Status);
+                                             } else {
+                                                 Retry++;
+                                                 // led_blink(Retry);
+                                                 /* for(int i = 0;i < 5;i++){
+                                                     HAL_Delay(50);
+                                                     transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                                  } */
+                                                  HAL_Delay(50);
+                                                  transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                                  // Discard message(s) that received during HAL_delay()
+                                                  while(is_can_msg_pending(CAN_RX_FIFO0)){
+                                                      can_rx(&rx_msg_header, rx_msg_data);
+                                                  }
+                                                  rx_msg_header.StdId = CAN_ID_SHIFT;
+                                                  // AvhControlStatus = NOT_READY;
+                                                  // led_blink(Status);
+                                              }
+                                          }
+                                          break;
                                     }
-                                    rx_msg_header.StdId = CAN_ID_SHIFT;
-                                    // AvhControlStatus = NOT_READY;
-                                    // led_blink(Status);
                                 }
-                            } else { // Unexpected case
-                                // Output Warning message
-                                dprintf_("# Warning: Unexpected case (Status=%d AVH=%d AVHControl=%d).\n", AvhControlStatus, AvhStatus, AvhControl);
                             }
                         }
                         PreviousCanId = rx_msg_header.StdId;
