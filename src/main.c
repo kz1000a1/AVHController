@@ -294,7 +294,7 @@ int main(void)
                         } else {
                             if((rx_msg_data[2] & 0x03) == 0x0){
                                 Status = CANCELLED;
-                                dprintf_("# INFO AVH control cancelled.\n)"
+                                dprintf_("# INFO AVH control cancelled.\n");
                             }
                             if(Status == PROCESSING){
                                 switch(AvhControlStatus){
