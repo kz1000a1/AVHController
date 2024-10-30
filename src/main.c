@@ -292,7 +292,7 @@ int main(void)
                             // Output Information message
                             // 1027 dprintf_("# Information: ENGINE STOP.\n");
                         } else {
-                            if((rx_msg_data[2] & 0x03) == 0x0){
+                            if((rx_msg_data[2] & 0x03) != 0x0){
                                 Status = CANCELLED;
                                 dprintf_("# INFO AVH control cancelled.\n");
                             }
