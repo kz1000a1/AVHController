@@ -309,26 +309,25 @@ int main(void)
                                                 dprintf_("# Warning: Enable or disable auto vehicle hold failed\n");
                                                 Status = FAILED;
                                                 // led_blink(Status);
-                                             } else {
-                                                 Retry++;
-                                                 // led_blink(Retry);
-                                                 /* for(int i = 0;i < 5;i++){
-                                                     HAL_Delay(50);
-                                                     transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
-                                                  } */
-                                                  HAL_Delay(50);
-                                                  transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
-                                                  // Discard message(s) that received during HAL_delay()
-                                                  while(is_can_msg_pending(CAN_RX_FIFO0)){
-                                                      can_rx(&rx_msg_header, rx_msg_data);
-                                                  }
-                                                  rx_msg_header.StdId = CAN_ID_SHIFT;
-                                                  // AvhControlStatus = NOT_READY;
-                                                  // led_blink(Status);
-                                              }
-                                          }
-                                          break;
-                                    }
+                                            } else {
+                                                Retry++;
+                                                // led_blink(Retry);
+                                                /* for(int i = 0;i < 5;i++){
+                                                    HAL_Delay(50);
+                                                    transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                                } */
+                                                HAL_Delay(50);
+                                                transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                                // Discard message(s) that received during HAL_delay()
+                                                while(is_can_msg_pending(CAN_RX_FIFO0)){
+                                                    can_rx(&rx_msg_header, rx_msg_data);
+                                                }
+                                                rx_msg_header.StdId = CAN_ID_SHIFT;
+                                                // AvhControlStatus = NOT_READY;
+                                                // led_blink(Status);
+                                            }
+                                        }
+                                        break;
                                 }
                             }
                         }
