@@ -45,6 +45,7 @@ enum avh_control_status {
 // STATUS
 enum status {
     PROCESSING,
+    CANCELLED,
     FAILED,
     SUCCEEDED
 };
