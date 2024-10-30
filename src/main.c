@@ -153,6 +153,7 @@ int main(void)
     static float Speed = 0;
     static float PrevSpeed = 0;
     static float Brake = 0;
+    static float MaxBrake = 0;
     static float PrevBrake = 0;
     static float Accel = 0;
 
@@ -195,6 +196,9 @@ int main(void)
                         if(100 < Brake){
                             Brake = 100;
                         }
+                        if(MaxBrake < Brake){
+                            MaxBrake = Brake;
+                        }
 
                         /*
                         if((rx_msg_data[7] & 0xf0) == 0x50){
@@ -216,7 +220,7 @@ int main(void)
                                         led_blink((AvhStatus << 1) + AvhControl);
                                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                         dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
+                                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
                                         dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
                                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
@@ -235,7 +239,7 @@ int main(void)
                                         led_blink((AvhStatus << 1) + AvhControl);
                                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                         dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
+                                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
                                         dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
                                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
