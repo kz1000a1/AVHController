@@ -253,7 +253,7 @@ int main(void)
                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
                         */
 
-                        PreviousCanId = rx_msg_header.StdId;AvhHold
+                        PreviousCanId = rx_msg_header.StdId;
                         break;
 
                     case CAN_ID_SHIFT:
