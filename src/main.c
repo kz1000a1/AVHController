@@ -21,21 +21,6 @@
     enum debug_mode DebugMode = NORMAL;
 #endif
 
-/*
-uint16_t bytesToUint(uint8_t raw[], int shift, int size){
-    uint16_t result = 0;
-
-    for (int i = 0; i < size; i++){
-        result = result << (sizeof raw[0] * 8);
-        for (int j = 0; j < sizeof raw[0] * 8; j++){
-            result += raw[i + shift] & (1 << j);
-        }
-    }
-
-    return result;
-}
-*/
-
 void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
     uint32_t CurrentTime;
 
@@ -199,13 +184,6 @@ int main(void)
                         if(MaxBrake < Brake){
                             MaxBrake = Brake;
                         }
-
-                        /*
-                        if((rx_msg_data[7] & 0xf0) == 0x50){
-                            ParkBrake = BRAKE_ON;
-                        } else {
-                            ParkBrake = BRAKE_OFF;
-                        } */
                         ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
 
                         switch (AvhStatus){
@@ -215,7 +193,6 @@ int main(void)
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
-                                            // led_blink(Status);
                                         }
                                         led_blink((AvhStatus << 1) + AvhControl);
                                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
@@ -234,7 +211,6 @@ int main(void)
                                         AvhControl = AVH_ON;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
-                                            // led_blink(Status);
                                         }
                                         led_blink((AvhStatus << 1) + AvhControl);
                                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
@@ -248,23 +224,11 @@ int main(void)
                                 break;
                         }
 
-                        /*
-                        dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                        dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
-                        dprintf_("# DEBUG Gear: %d(SHIFT_D:D,SHIFT_N:N,SHIFT_R:R,SHIFT_P:P)\n", Gear);
-                        dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-                        */
-
                         PreviousCanId = rx_msg_header.StdId;
                         break;
 
                     case CAN_ID_SHIFT:
-                        if(Gear != (rx_msg_data[3] & 0x07)){
-                            // 1027 dprintf_("# Information: Change Gear %n to %n.\n", Gear, rx_msg_data[3] & 0x07);
-                            Gear = (rx_msg_data[3] & 0x07);
-                        }
+                        Gear = (rx_msg_data[3] & 0x07);
                         PreviousCanId = rx_msg_header.StdId;
                         break;
 
@@ -277,15 +241,12 @@ int main(void)
                         AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
                         if(((rx_msg_data[5] & 0x20) == 0x20) ^ AvhStatus){
                             AvhStatus = !AvhStatus;
-                            // Output Information message
-                            // 1027 dprintf_("# Information: Auto vehicle hold On.\n");
                             if(Retry != 0 && Status == PROCESSING && AvhControl == AvhStatus){
                                 // Output Information message
                                 dprintf_("# INFO AVH %d(1:ON,0:OFF) succeeded. Retry: %d\n", AvhStatus, Retry);
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
-                                // led_blink(Status);
                             }
                             led_blink((AvhStatus << 1) + AvhControl);
                         }
@@ -301,7 +262,6 @@ int main(void)
                             ParkBrake = BRAKE_ON;
                             AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
-                            // led_blink(Status);
                             Retry = 0;
                             Gear = SHIFT_P;
                             Speed = 0;
@@ -310,8 +270,6 @@ int main(void)
                             PrevBrake = 0;
                             Accel = 0;
                             led_blink((AvhStatus << 1) + AvhControl);
-                            // Output Information message
-                            // 1027 dprintf_("# Information: ENGINE STOP.\n");
                         } else {
                             if((rx_msg_data[2] & 0x03) != 0x0){
                                 Status = CANCELLED;
@@ -330,10 +288,8 @@ int main(void)
                                                 // Output Warning message
                                                 dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
                                                 Status = FAILED;
-                                                // led_blink(Status);
                                             } else {
                                                 Retry++;
-                                                // led_blink(Retry);
                                                 for(int i = 0;i < 2;i++){
                                                     HAL_Delay(50);
                                                     transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
@@ -343,8 +299,6 @@ int main(void)
                                                     can_rx(&rx_msg_header, rx_msg_data);
                                                 }
                                                 rx_msg_header.StdId = CAN_ID_SHIFT;
-                                                // AvhControlStatus = NOT_READY;
-                                                // led_blink(Status);
                                             }
                                         }
                                         break;
@@ -356,7 +310,7 @@ int main(void)
 
                     default: // Unexpected can id
                         // Output Warning message
-                        // 1027 dprintf_("# Warning: Unexpected can id (0x%03x).\n", rx_msg_header.StdId);
+                        // dprintf_("# Warning: Unexpected can id (0x%03x).\n", rx_msg_header.StdId);
                         break;
                 }
             }
