@@ -23,6 +23,9 @@
 #define CAN_ID_SHIFT       0x048
 #define CAN_ID_SPEED       0x139
 #define CAN_ID_ACCEL       0x040
+#define CAN_ID_BELT        0x390
+#define CAN_ID_ACCEL       0x040
+
 
 // Brake Pressure to Start AVH
 #define BRAKE_HIGH 80
@@ -45,6 +48,10 @@ enum avh_control_status {
 // PARKING BRAKE
 #define BRAKE_OFF false
 #define BRAKE_ON  true
+
+// SAFETY_BELT
+#define BELT_OFF  true
+#define BELT_ON   false
 
 // STATUS
 enum status {
