@@ -1,4 +1,4 @@
-８//
+//
 // can: initializes and provides methods to interact with the CAN peripheral
 //
 
