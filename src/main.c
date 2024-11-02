@@ -240,7 +240,7 @@ int main(void)
                         break;
 
                     case CAN_ID_BELT:
-                        SafetyBelt = (rx_msg_data[6] & 0x01 != 0x01);
+                        SafetyBelt = ((rx_msg_data[6] & 0x01) != 0x01);
                         // PreviousCanId = rx_msg_header.StdId;
                         break;
 
