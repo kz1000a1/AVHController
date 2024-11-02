@@ -244,7 +244,7 @@ int main(void)
                         // PreviousCanId = rx_msg_header.StdId;
                         break;
 
-                    case CAN_ID_BELT:
+                    case CAN_ID_DOOR:
                         Door = (rx_msg_data[4] & 0x01 != 0x01);
                         // PreviousCanId = rx_msg_header.StdId;
                         break;
