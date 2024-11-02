@@ -1,4 +1,4 @@
-#ifndef __SUBARU_LEVORG_VNX_H__
+７#ifndef __SUBARU_LEVORG_VNX_H__
 #define __SUBARU_LEVORG_VNX_H__
 
 /* #define for DEBUG_MODE */
@@ -24,6 +24,7 @@
 #define CAN_ID_SPEED       0x139
 #define CAN_ID_ACCEL       0x040
 #define CAN_ID_BELT        0x390
+#define CAN_ID_DOOR        0x3AC
 #define CAN_ID_ACCEL       0x040
 
 
@@ -50,8 +51,12 @@ enum avh_control_status {
 #define BRAKE_ON  true
 
 // SAFETY_BELT
-#define BELT_OFF  true
-#define BELT_ON   false
+#define BELT_OFF  false
+#define BELT_ON   true
+
+// DOOR
+#define DOOR_OPEN  false
+#define DOOR_CLOSE true
 
 // STATUS
 enum status {
