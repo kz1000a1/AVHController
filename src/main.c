@@ -131,6 +131,7 @@ int main(void)
     static bool AvhHold = HOLD_OFF;
     static bool AvhControl = AVH_OFF;
     static bool ParkBrake = BRAKE_ON;
+    static bool SafetyBelt = BELT_OFF;
     static enum status Status = PROCESSING;
     static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
@@ -237,6 +238,11 @@ int main(void)
                         PreviousCanId = rx_msg_header.StdId;
                         break;
 
+                    case CAN_ID_BELT:
+                        SafetyBelt = (rx_msg_data[6] & 0x01 != 0x01);
+                        PreviousCanId = rx_msg_header.StdId;
+                        break;
+
                     case CAN_ID_AVH_STATUS:
                         AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
                         if(((rx_msg_data[5] & 0x20) == 0x20) ^ AvhStatus){
@@ -260,6 +266,7 @@ int main(void)
                             AvhHold = HOLD_OFF;
                             AvhControl = AVH_OFF;
                             ParkBrake = BRAKE_ON;
+                            SafetyBelt = BELT_OFF;
                             AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
                             Retry = 0;
