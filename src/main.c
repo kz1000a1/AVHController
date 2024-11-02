@@ -243,6 +243,11 @@ int main(void)
 
                     case CAN_ID_BELT:
                         SafetyBelt = ((rx_msg_data[6] & 0x01) != 0x01);
+                        if(SafetyBelt == BELT_OFF && (Status == FAILED || Status == CANCELLED)){
+                            AvhControl = AvhStatus;
+                            Status = PROCESSING;
+                            dprintf_("# INFO AVH control restarted.\n");
+                        }
                         // PreviousCanId = rx_msg_header.StdId;
                         break;
 
