@@ -133,6 +133,7 @@ int main(void)
     static bool ParkBrake = BRAKE_ON;
     static bool SafetyBelt = BELT_OFF;
     static bool Door = DOOR_OPEN;
+    static bool Door652 = DOOR_OPEN;
     static enum status Status = PROCESSING;
     static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
@@ -203,6 +204,7 @@ int main(void)
                                         dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
                                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
+                                        dprintf_("# DEBUG Door: %d(0:OFF,1:ON) 652: %d / Belt: %d\n", Door, Door652, SafetyBelt);
                                     }
                                 }
                                 break;
@@ -221,6 +223,7 @@ int main(void)
                                         dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
                                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
+                                        dprintf_("# DEBUG Door: %d(0:OFF,1:ON) 652: %d / Belt: %d\n", Door, Door652, SafetyBelt);
                                     }
                                 }
                                 break;
@@ -249,6 +252,11 @@ int main(void)
                         // PreviousCanId = rx_msg_header.StdId;
                         break;
 
+                    case 0x652:
+                        Door652 = ((rx_msg_data[3] & 0x01) != 0x01);
+                        // PreviousCanId = rx_msg_header.StdId;
+                        break;
+
                     case CAN_ID_AVH_STATUS:
                         AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
                         if(((rx_msg_data[5] & 0x20) == 0x20) ^ AvhStatus){
@@ -274,6 +282,7 @@ int main(void)
                             ParkBrake = BRAKE_ON;
                             SafetyBelt = BELT_OFF;
                             Door = DOOR_OPEN;
+                            Door652 = DOOR_OPEN;
                             AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
                             Retry = 0;
