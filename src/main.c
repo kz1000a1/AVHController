@@ -276,7 +276,6 @@ int main(void)
                             ParkBrake = BRAKE_ON;
                             SafetyBelt = BELT_OFF;
                             Door = DOOR_OPEN;
-                            Door652 = DOOR_OPEN;
                             AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
                             Retry = 0;
