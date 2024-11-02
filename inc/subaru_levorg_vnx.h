@@ -1,4 +1,4 @@
-７#ifndef __SUBARU_LEVORG_VNX_H__
+#ifndef __SUBARU_LEVORG_VNX_H__
 #define __SUBARU_LEVORG_VNX_H__
 
 /* #define for DEBUG_MODE */
