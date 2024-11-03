@@ -83,6 +83,6 @@ extern enum debug_mode DebugMode;
 // for Calculate Check Sum
 #define SUM_CHECK_ADDER (-0x3F)
 
-#define MAX_RETRY 3
+#define MAX_RETRY 5
 
 #endif /* __SUBARU_LEVORG_VNX_H_ */
