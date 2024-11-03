@@ -246,6 +246,7 @@ int main(void)
                         SafetyBelt = ((rx_msg_data[6] & 0x01) != 0x01);
                         if(SafetyBelt == BELT_OFF && (Status == FAILED || Status == CANCELLED)){
                             AvhControl = AvhStatus;
+                            Retry = 0;
                             Status = PROCESSING;
                             dprintf_("# INFO AVH control restarted.\n");
                         }
