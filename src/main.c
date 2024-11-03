@@ -179,7 +179,8 @@ int main(void)
                         PrevSpeed = Speed;
                         PrevBrake = Brake;
                         Speed = (rx_msg_data[2] + ((rx_msg_data[3] & 0x1f) << 8)) * 0.05625;
-                        Brake = rx_msg_data[5] / 0.7;
+                        // Brake = rx_msg_data[5] / 0.7;
+                        Brake = rx_msg_data[5] / 0.8;
                         if(100 < Brake){
                             Brake = 100;
                         }
