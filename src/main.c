@@ -192,7 +192,7 @@ int main(void)
                         switch (AvhStatus){
                             case AVH_ON:
                                 if(AvhControl == AVH_ON){
-                                    if((Gear != SHIFT_D && (Brake != 0.0 || AvhHold == HOLD_OFF)) || ((Brake == 0.0 || SafetyBelt == BELT_OFF || Door == DOOR_OPEN) && AvhHold == HOLD_OFF) || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                    if((Gear != SHIFT_D && (BRAKE_LOW < Brake || AvhHold == HOLD_OFF)) || ((Brake == 0.0 || SafetyBelt == BELT_OFF || Door == DOOR_OPEN) && AvhHold == HOLD_OFF) || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
