@@ -277,16 +277,16 @@ int main(void)
 
                     case CAN_ID_AVH_CONTROL:
                         if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
+                            AvhControlStatus = ENGINE_STOP;
                             AvhStatus = AVH_OFF;
                             AvhHold = HOLD_OFF;
                             AvhControl = AVH_OFF;
                             ParkBrake = BRAKE_ON;
                             SafetyBelt = BELT_OFF;
                             Door = DOOR_OPEN;
-                            AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
-                            Retry = 0;
                             Gear = SHIFT_P;
+                            Retry = 0;
                             Speed = 0;
                             PrevSpeed = 0;
                             Brake = 0;
