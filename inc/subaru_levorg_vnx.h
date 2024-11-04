@@ -30,7 +30,7 @@
 #define BRAKE_HIGH 80
 
 // Brake Pressure to Disable AVH
-#define BRAKE_LOW   0
+#define BRAKE_LOW  10
 
 // AVH CONTROL STATUS
 enum avh_control_status {
