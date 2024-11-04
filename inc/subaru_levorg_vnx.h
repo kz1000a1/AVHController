@@ -26,9 +26,11 @@
 #define CAN_ID_BELT        0x390
 #define CAN_ID_DOOR        0x3AC
 
-
-// Brake Pressure to Start AVH
+// Brake Pressure to Enable AVH
 #define BRAKE_HIGH 80
+
+// Brake Pressure to Disable AVH
+#define BRAKE_LOW   0
 
 // AVH CONTROL STATUS
 enum avh_control_status {
