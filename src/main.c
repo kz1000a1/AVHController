@@ -294,7 +294,7 @@ int main(void)
                             Accel = 0;
                             led_blink((AvhStatus << 1) + AvhControl);
                         } else {
-                            if((rx_msg_data[2] & 0x03) != 0x0){
+                            if((rx_msg_data[2] & 0x03) != 0x0 && Status != CANCELLED){
                                 Status = CANCELLED;
                                 dprintf_("# INFO AVH control cancelled.\n");
                             }
