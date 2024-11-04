@@ -179,7 +179,6 @@ int main(void)
                         PrevSpeed = Speed;
                         PrevBrake = Brake;
                         Speed = (rx_msg_data[2] + ((rx_msg_data[3] & 0x1f) << 8)) * 0.05625;
-                        // Brake = rx_msg_data[5] / 0.7;
                         Brake = rx_msg_data[5] / 0.8;
                         if(100 < Brake){
                             Brake = 100;
@@ -192,7 +191,7 @@ int main(void)
                         switch (AvhStatus){
                             case AVH_ON:
                                 if(AvhControl == AVH_ON){
-                                    if((Gear != SHIFT_D && (BRAKE_LOW < Brake || AvhHold == HOLD_OFF)) || ((Brake == 0.0 || SafetyBelt == BELT_OFF || Door == DOOR_OPEN) && AvhHold == HOLD_OFF) || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                    if((Gear != SHIFT_D && (BRAKE_LOW <= Brake || AvhHold == HOLD_OFF)) || ((Brake == 0.0 || SafetyBelt == BELT_OFF || Door == DOOR_OPEN) && AvhHold == HOLD_OFF) || ParkBrake == BRAKE_ON || Accel != 0.0 || (PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
