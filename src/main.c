@@ -315,12 +315,13 @@ int main(void)
                                 }
                             } else {
                                 if(Status == CANCELLED || Status == FAILED){
-                                    if(Led){
+                                    if(Led　== LED_ON){
                                         led_blink(!((AvhStatus << 1) + AvhControl));
+                                        Led = LED_OFF;
                                     } else {
                                         led_blink((AvhStatus << 1) + AvhControl);
+                                        Led = LED_ON;
                                     }
-                                    Led　= !Led;
                                 }
                             }
                             
