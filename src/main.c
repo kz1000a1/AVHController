@@ -127,13 +127,14 @@ int main(void)
     uint8_t rx_msg_data[8] = {0};
 
     static enum avh_control_status AvhControlStatus = ENGINE_STOP;
+    static enum status Status = PROCESSING;
     static bool AvhStatus = AVH_OFF;
     static bool AvhHold = HOLD_OFF;
     static bool AvhControl = AVH_OFF;
     static bool ParkBrake = BRAKE_ON;
     static bool SafetyBelt = BELT_OFF;
     static bool Door = DOOR_OPEN;
-    static enum status Status = PROCESSING;
+    static bool Led;
     static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t Retry = 0;
@@ -203,7 +204,9 @@ int main(void)
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
                                         }
-                                        led_blink((AvhStatus << 1) + AvhControl);
+                                        if(Status != CANCELLED && Status != FAILED){
+                                            led_blink((AvhStatus << 1) + AvhControl);
+                                        }
                                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                         dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
                                         dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
@@ -222,7 +225,9 @@ int main(void)
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
                                         }
-                                        led_blink((AvhStatus << 1) + AvhControl);
+                                        if(Status != CANCELLED && Status != FAILED){
+                                            led_blink((AvhStatus << 1) + AvhControl);
+                                        }
                                         dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                         dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
                                         dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
@@ -275,7 +280,9 @@ int main(void)
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
                             }
-                            led_blink((AvhStatus << 1) + AvhControl);
+                            if(Status != CANCELLED && Status != FAILED){
+                                led_blink((AvhStatus << 1) + AvhControl);
+                            }
                         }
 
                         // PreviousCanId = rx_msg_header.StdId;
@@ -284,13 +291,13 @@ int main(void)
                     case CAN_ID_AVH_CONTROL:
                         if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
                             AvhControlStatus = ENGINE_STOP;
+                            Status = PROCESSING;
                             AvhStatus = AVH_OFF;
                             AvhHold = HOLD_OFF;
                             AvhControl = AVH_OFF;
                             ParkBrake = BRAKE_ON;
                             SafetyBelt = BELT_OFF;
                             Door = DOOR_OPEN;
-                            Status = PROCESSING;
                             Gear = SHIFT_P;
                             Retry = 0;
                             Speed = 0;
@@ -300,8 +307,17 @@ int main(void)
                             Accel = 0;
                             led_blink((AvhStatus << 1) + AvhControl);
                         } else {
+                            if(Status == CANCELLED || Status == FAILED){
+                                if(Led){
+                                    led_blink(! ((AvhStatus << 1) + AvhControl));
+                                } else {
+                                    led_blink((AvhStatus << 1) + AvhControl);
+                                }
+                                Led++;
+                            }
                             if((rx_msg_data[2] & 0x03) != 0x0 && Status != CANCELLED){
                                 Status = CANCELLED;
+                                Led = LED_OFF;
                                 dprintf_("# INFO AVH control cancelled.\n");
                             }
                             if(Status == PROCESSING){
@@ -315,8 +331,9 @@ int main(void)
                                         if(AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
                                             if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
                                                 // Output Warning message
-                                                dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
                                                 Status = FAILED;
+                                                Led = LED_OFF;
+                                                dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
                                             } else {
                                                 Retry++;
                                                 for(int i = 0;i < 2;i++){
