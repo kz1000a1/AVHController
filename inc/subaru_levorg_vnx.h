@@ -27,7 +27,7 @@
 #define CAN_ID_DOOR        0x3AC
 
 // Brake Pressure to Enable AVH
-#define BRAKE_HIGH 80
+#define BRAKE_HIGH 70
 
 // Brake Pressure to Disable AVH
 #define BRAKE_LOW  10
