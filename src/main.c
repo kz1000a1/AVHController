@@ -1,4 +1,4 @@
-９//
+//
 // AVH(Auto Vehicle Hold) auto introduce and remove system firmware for SUBARU Levorg VN5
 //
 
@@ -193,7 +193,7 @@ int main(void)
                                 if(AvhControl == AVH_ON){
                                     if((AvhHold == HOLD_OFF && (Gear != SHIFT_D || Brake == 0.0 || SafetyBelt == BELT_OFF || Door == DOOR_OPEN)) || // AVH HOLD OFF
                                        (AvhHold == HOLD_ON && Gear != SHIFT_D && BRAKE_LOW <= Brake) || // AVH HOLD ON
-                                       (ParkBrake == BRAKE_ON || Accel != 0.0 || (Gear == SHIFT_D && PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)){
+                                       (ParkBrake == BRAKE_ON || Accel != 0.0 || (Gear == SHIFT_D && PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH))){
                                         AvhControl = AVH_OFF;
                                         if(Status == SUCCEEDED){
                                             Status = PROCESSING;
