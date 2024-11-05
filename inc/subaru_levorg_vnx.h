@@ -59,6 +59,10 @@ enum avh_control_status {
 #define DOOR_OPEN  false
 #define DOOR_CLOSE true
 
+// LED for DEBUG
+#define LED_ON     true
+#define LED_OFF    false
+
 // STATUS
 enum status {
     PROCESSING,
