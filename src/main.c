@@ -134,7 +134,7 @@ int main(void)
     static bool ParkBrake = BRAKE_ON;
     static bool SafetyBelt = BELT_OFF;
     static bool Door = DOOR_OPEN;
-    static bool Led;
+    static bool LedStatus;
     static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t Retry = 0;
@@ -310,17 +310,17 @@ int main(void)
                             if((rx_msg_data[2] & 0x03) != 0x0){
                                 if(Status != CANCELLED){
                                     Status = CANCELLED;
-                                    Led = LED_OFF;
+                                    LedStatus = LED_OFF;
                                     dprintf_("# INFO AVH control cancelled.\n");
                                 }
                             } else {
                                 if(Status == CANCELLED || Status == FAILED){
-                                    if(Led　== LED_ON){
+                                    if(LedStatus　== LED_ON){
                                         led_blink(!((AvhStatus << 1) + AvhControl));
-                                        Led = LED_OFF;
+                                        LedStatus = LED_OFF;
                                     } else {
                                         led_blink((AvhStatus << 1) + AvhControl);
-                                        Led = LED_ON;
+                                        LedStatus = LED_ON;
                                     }
                                 }
                             }
@@ -337,7 +337,7 @@ int main(void)
                                             if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
                                                 // Output Warning message
                                                 Status = FAILED;
-                                                Led = LED_OFF;
+                                                LedStatus = LED_OFF;
                                                 dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
                                             } else {
                                                 Retry++;
