@@ -134,7 +134,7 @@ int main(void)
     static bool ParkBrake = BRAKE_ON;
     static bool SafetyBelt = BELT_OFF;
     static bool Door = DOOR_OPEN;
-    static bool Led　= LED_OFF;
+    static bool Led = LED_OFF;
     static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t Retry = 0;
