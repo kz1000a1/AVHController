@@ -307,19 +307,23 @@ int main(void)
                             Accel = 0;
                             led_blink((AvhStatus << 1) + AvhControl);
                         } else {
-                            if(Status == CANCELLED || Status == FAILED){
-                                if(Led){
-                                    led_blink(! ((AvhStatus << 1) + AvhControl));
-                                } else {
-                                    led_blink((AvhStatus << 1) + AvhControl);
+                            if((rx_msg_data[2] & 0x03) != 0x0){
+                                if(Status != CANCELLED){
+                                    Status = CANCELLED;
+                                    Led = LED_OFF;
+                                    dprintf_("# INFO AVH control cancelled.\n");
                                 }
-                                Led++;
+                            } else {
+                                if(Status == CANCELLED || Status == FAILED){
+                                    if(Led){
+                                        led_blink(! ((AvhStatus << 1) + AvhControl));
+                                    } else {
+                                        led_blink((AvhStatus << 1) + AvhControl);
+                                    }
+                                    Led++;
+                                }
                             }
-                            if((rx_msg_data[2] & 0x03) != 0x0 && Status != CANCELLED){
-                                Status = CANCELLED;
-                                Led = LED_OFF;
-                                dprintf_("# INFO AVH control cancelled.\n");
-                            }
+                            
                             if(Status == PROCESSING){
                                 switch(AvhControlStatus){
                                     case NOT_READY:
