@@ -344,13 +344,13 @@ int main(void)
                                                     HAL_Delay(50);
                                                     transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
                                                 }
-                                                dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                                                dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
+                                                // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                                                // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
                                                 dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
-                                                dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
-                                                dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                                dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-                                                dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
+                                                // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
+                                                // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+                                                // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
+                                                // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
                                                 // Discard message(s) that received during HAL_delay()
                                                 while(is_can_msg_pending(CAN_RX_FIFO0)){
                                                     can_rx(&rx_msg_header, rx_msg_data);
