@@ -135,6 +135,7 @@ int main(void)
     static bool SafetyBelt = BELT_OFF;
     static bool Door = DOOR_OPEN;
     static bool Led = LED_OFF;
+    static bool EyeSight = HOLD_OFF;
     static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t Retry = 0;
@@ -193,8 +194,8 @@ int main(void)
                             case AVH_ON:
                                 if(AvhControl == AVH_ON){
                                     if(
-                                       // Both AVH ON and OFF
-                                       (ParkBrake == BRAKE_ON || ((Gear == SHIFT_D || Gear == SHIFT_R) && Accel != 0.0) || (Gear == SHIFT_D && PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)) ||
+                                       // Both AVH HOLD ON and OFF
+                                       (ParkBrake == BRAKE_ON || EyeSight == HOLD_ON || ((Gear == SHIFT_D || Gear == SHIFT_R) && Accel != 0.0) || (Gear == SHIFT_D && PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)) ||
                                        // AVH HOLD ON only
                                        (AvhHold == HOLD_ON && Gear != SHIFT_D && BRAKE_LOW <= Brake) ||
                                        // AVH HOLD OFF only
@@ -214,6 +215,7 @@ int main(void)
                                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
                                         dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
+                                        dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
                                     }
                                 }
                                 break;
@@ -269,6 +271,11 @@ int main(void)
                         // PreviousCanId = rx_msg_header.StdId;
                         break;
 
+                    case CAN_ID_EYESIGHT:
+                        EyeSight = ((rx_msg_data[7] & 0x10) == 0x10);
+                        PreviousCanId = rx_msg_header.StdId;
+                        break;
+
                     case CAN_ID_AVH_STATUS:
                         AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
                         if(((rx_msg_data[5] & 0x20) == 0x20) ^ AvhStatus){
@@ -298,6 +305,7 @@ int main(void)
                             ParkBrake = BRAKE_ON;
                             SafetyBelt = BELT_OFF;
                             Door = DOOR_OPEN;
+                            EyeSight = HOLD_OFF;
                             Gear = SHIFT_P;
                             Retry = 0;
                             Speed = 0;
