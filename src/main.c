@@ -2,7 +2,7 @@
 // AVH(Auto Vehicle Hold) auto introduce and remove system firmware for SUBARU Levorg VN5
 //
 
-#include <stdbool.h>
+// #include <stdbool.h>
 #include "stm32f0xx.h"
 #include "stm32f0xx_hal.h"
 
@@ -128,14 +128,14 @@ int main(void)
 
     static enum avh_control_status AvhControlStatus = ENGINE_STOP;
     static enum status Status = PROCESSING;
-    static bool AvhStatus = AVH_OFF;
-    static bool AvhHold = HOLD_OFF;
-    static bool AvhControl = AVH_OFF;
-    static bool ParkBrake = BRAKE_ON;
-    static bool SafetyBelt = BELT_OFF;
-    static bool Door = DOOR_OPEN;
-    static bool Led = LED_OFF;
-    static bool EyeSight = HOLD_OFF;
+    static uint8_t AvhStatus = AVH_OFF;
+    static uint8_t AvhHold = HOLD_OFF;
+    static uint8_t AvhControl = AVH_OFF;
+    static uint8_t ParkBrake = BRAKE_ON;
+    static uint8_t SafetyBelt = BELT_OFF;
+    static uint8_t Door = DOOR_OPEN;
+    static uint8_t Led = LED_OFF;
+    static uint8_t EyeSight = HOLD_OFF;
     static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t Retry = 0;
@@ -237,6 +237,7 @@ int main(void)
                                         dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
                                         dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
+                                        dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
                                     }
                                 }
                                 break;
@@ -359,6 +360,7 @@ int main(void)
                                                 // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                                                 // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
                                                 // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
+                                                // dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
                                                 // Discard message(s) that received during HAL_delay()
                                                 while(is_can_msg_pending(CAN_RX_FIFO0)){
                                                     can_rx(&rx_msg_header, rx_msg_data);
