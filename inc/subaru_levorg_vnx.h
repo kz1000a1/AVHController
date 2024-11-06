@@ -11,7 +11,8 @@
 
 #ifdef DEBUG_MODE
 #define dprintf_(fmt, ...) \
-	DebugMode==DEBUG?printf_(fmt, ##__VA_ARGS__):no_printf_(fmt, ##__VA_ARGS__)
+	// DebugMode==DEBUG?printf_(fmt, ##__VA_ARGS__):no_printf_(fmt, ##__VA_ARGS__)
+	printf_(fmt, ##__VA_ARGS__)
 #else
 #define dprintf_(fmt, ...) \
 	no_printf_(fmt, ##__VA_ARGS__)
