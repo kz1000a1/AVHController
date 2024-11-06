@@ -72,6 +72,13 @@ enum status {
     SUCCEEDED
 };
 
+// SHIFT
+#define SHIFT_D 1
+#define SHIFT_N 2
+#define SHIFT_R 3
+#define SHIFT_P 4
+
+/*
 // MODE
 enum debug_mode {
     NORMAL,
@@ -79,13 +86,8 @@ enum debug_mode {
     CANDUMP
 };
 
-// SHIFT
-#define SHIFT_D 1
-#define SHIFT_N 2
-#define SHIFT_R 3
-#define SHIFT_P 4
-
 extern enum debug_mode DebugMode;
+*/
 
 // for Calculate Check Sum
 #define SUM_CHECK_ADDER (-0x3F)
