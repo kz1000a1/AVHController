@@ -326,7 +326,7 @@ int main(void)
                                 }
                             }
                             
-                            switch(Ststus){
+                            switch(Status){
                                 case CANCELLED:
                                 case FAILED:
                                     if((rx_msg_data[2] & 0x03) == 0x0){
