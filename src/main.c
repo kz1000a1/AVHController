@@ -375,27 +375,27 @@ int main(void)
                                                 }
                                             }
                                             break;
-                                        }
-                                        break;
+                                    }
+                                    break;
                                 
-                                    case SUCCEEDED:
-                                        if(AvhStatus == AVH_ON && AvhHold == HOLD_OFF){
-                                            if(AvhUnhold == HOLD_OFF){
-                                                AvhControl = AVH_OFF;
-                                                AvhUnhold = HOLD_ON;
-                                                Status = PROCESSING;
-                                                dprintf_("# INFO AVH unholded. AVH off.\n");
-                                                led_blink((AvhStatus << 1) + AvhControl);
-                                            } else {
-                                                AvhUnhold = HOLD_OFF;
-                                            }
-                                        } else {
+                                case SUCCEEDED:
+                                    if(AvhStatus == AVH_ON && AvhHold == HOLD_OFF){
+                                        if(AvhUnhold == HOLD_OFF){
+                                            AvhControl = AVH_OFF;
                                             AvhUnhold = HOLD_ON;
+                                            Status = PROCESSING;
+                                            dprintf_("# INFO AVH unholded. AVH off.\n");
+                                            led_blink((AvhStatus << 1) + AvhControl);
+                                        } else {
+                                            AvhUnhold = HOLD_OFF;
                                         }
-                                        break;
-                                }
+                                    } else {
+                                        AvhUnhold = HOLD_ON;
+                                    }
+                                    break;
                             }
                         }
+                        
                         PreviousCanId = rx_msg_header.StdId;
                         break;
 
