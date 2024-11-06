@@ -15,11 +15,13 @@
 #include "printf.h"
 #include "subaru_levorg_vnx.h"
 
+/*
 #ifdef DEBUG_MODE
     enum debug_mode DebugMode = DEBUG;
 #else
     enum debug_mode DebugMode = NORMAL;
 #endif
+*/
 
 void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
     uint32_t CurrentTime;
@@ -177,17 +179,19 @@ int main(void)
         // If CAN message receive is pending, process the message
         if(is_can_msg_pending(CAN_RX_FIFO0)){
             can_rx(&rx_msg_header, rx_msg_data);
-
+            
+            /*
             // if(DebugMode == CANDUMP || (DebugMode == DEBUG && (rx_msg_header.StdId == CAN_ID_SHIFT || rx_msg_header.StdId == CAN_ID_AVH_STATUS || rx_msg_header.StdId == CAN_ID_AVH_CONTROL || rx_msg_header.StdId == CAN_ID_SPEED || rx_msg_header.StdId == CAN_ID_ACCEL))){
             if(DebugMode == CANDUMP){
                 print_rx_frame(&rx_msg_header, rx_msg_data);
             }
+            */
             
             if(rx_msg_header.RTR != CAN_RTR_DATA || rx_msg_header.DLC != 8){
                 continue;
             }
 
-            if(DebugMode != CANDUMP){
+            // if(DebugMode != CANDUMP){
                 switch (rx_msg_header.StdId){
                     case CAN_ID_SPEED:
                         PrevSpeed = Speed;
@@ -421,7 +425,7 @@ int main(void)
                         // dprintf_("# Warning: Unexpected can id (0x%03x).\n", rx_msg_header.StdId);
                         break;
                 }
-            }
+            // }
         }
     }
 }
