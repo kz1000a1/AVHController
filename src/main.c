@@ -106,6 +106,17 @@ void transmit_can_frame(uint8_t* rx_msg_data, uint8_t avh){
     }
 }
 
+void print_param(float Speed, float PrevSpeed, float Accel, float Brake, float PrevBrake, float MaxBrake, uint8_t Gear, uint8_t ParkBrake, uint8_t AvhStatus, uint8_t AvhControl, uint8_t AvhHold, uint8_t Door, uint8_t SafetyBelt, uint8_t EyeSight){
+    dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+    dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
+    dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
+    dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
+    dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+    dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
+    dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
+    dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
+}
+
 void led_blink(enum status Status){
     if(Status & 1){
         led_orange_on();
@@ -209,14 +220,16 @@ int main(void)
                                         if(Status != CANCELLED && Status != FAILED){
                                             led_blink((AvhStatus << 1) + AvhControl);
                                         }
-                                        dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                                        dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
-                                        dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
-                                        dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-                                        dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
-                                        dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
+
+                                        print_param(Speed, PrevSpeed, Accel, Brake, PrevBrake, MaxBrake, Gear, ParkBrake, AvhStatus, AvhControl, AvhHold, Door, SafetyBelt, EyeSight);
+                                        // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                                        // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
+                                        // dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
+                                        // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
+                                        // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+                                        // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
+                                        // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
+                                        // dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
                                     }
                                 }
                                 break;
@@ -231,14 +244,16 @@ int main(void)
                                         if(Status != CANCELLED && Status != FAILED){
                                             led_blink((AvhStatus << 1) + AvhControl);
                                         }
-                                        dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                                        dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                        dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
-                                        dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
-                                        dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-                                        dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
-                                        dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
+
+                                        print_param(Speed, PrevSpeed, Accel, Brake, PrevBrake, MaxBrake, Gear, ParkBrake, AvhStatus, AvhControl, AvhHold, Door, SafetyBelt, EyeSight);
+                                        // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                                        // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
+                                        // dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
+                                        // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
+                                        // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+                                        // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
+                                        // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
+                                        // dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
                                     }
                                 }
                                 break;
@@ -359,9 +374,11 @@ int main(void)
                                                         HAL_Delay(50);
                                                         transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
                                                     }
+
+                                                    print_param(Speed, PrevSpeed, Accel, Brake, PrevBrake, MaxBrake, Gear, ParkBrake, AvhStatus, AvhControl, AvhHold, Door, SafetyBelt, EyeSight);
                                                     // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                                     // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                                    dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
+                                                    // dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
                                                     // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
                                                     // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
                                                     // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
