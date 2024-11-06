@@ -11,12 +11,12 @@
 
 #ifdef DEBUG_MODE
 #define dprintf_(fmt, ...) \
-	// DebugMode==DEBUG?printf_(fmt, ##__VA_ARGS__):no_printf_(fmt, ##__VA_ARGS__)
 	printf_(fmt, ##__VA_ARGS__)
 #else
 #define dprintf_(fmt, ...) \
 	no_printf_(fmt, ##__VA_ARGS__)
 #endif
+// DebugMode==DEBUG?printf_(fmt, ##__VA_ARGS__):no_printf_(fmt, ##__VA_ARGS__)
 
 // Receive Only Two CAN Ids
 #define CAN_ID_AVH_CONTROL 0x6BB
