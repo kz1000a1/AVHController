@@ -103,9 +103,11 @@ void transmit_can_frame(uint8_t* rx_msg_data, uint8_t avh){
                       tx_msg_data[7]) + SUM_CHECK_ADDER;
     can_tx(&tx_msg_header, tx_msg_data); // Queueing message
     can_process(); // Transmit message
-    if(DebugMode == DEBUG){
-        print_tx_frame(&tx_msg_header, tx_msg_data);
-    }
+    // if(DebugMode == DEBUG){
+#ifdef DEBUG_MODE
+    print_tx_frame(&tx_msg_header, tx_msg_data);
+#endif
+    // }
 }
 
 void print_param(float Speed, float PrevSpeed, float Accel, float Brake, float PrevBrake, float MaxBrake, uint8_t Gear, uint8_t ParkBrake, uint8_t AvhStatus, uint8_t AvhControl, uint8_t AvhHold, uint8_t Door, uint8_t SafetyBelt, uint8_t EyeSight){
