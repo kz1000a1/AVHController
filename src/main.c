@@ -194,7 +194,7 @@ int main(void)
                                 if(AvhControl == AVH_ON){
                                     if(
                                        // Both AVH ON and OFF
-                                       (ParkBrake == BRAKE_ON || ((Gear == SHIFT_D || Gear == SHIFT_R) && Accel != 0.0) || (Gear == SHIFT_D && PrevBrake == 0.0 && BRAKE_LOW <= Brake && Brake < BRAKE_HIGH)) ||
+                                       (ParkBrake == BRAKE_ON || ((Gear == SHIFT_D || Gear == SHIFT_R) && Accel != 0.0) || (Gear == SHIFT_D && PrevBrake == 0.0 && Brake != 0.0 && Brake < BRAKE_HIGH)) ||
                                        // AVH HOLD ON only
                                        (AvhHold == HOLD_ON && Gear != SHIFT_D && BRAKE_LOW <= Brake) ||
                                        // AVH HOLD OFF only
