@@ -316,7 +316,7 @@ int main(void)
                             } else {
                                 if(Status == CANCELLED || Status == FAILED){
                                     if(Led){
-                                        led_blink(!((AvhStatus << 1) + AvhControl));
+                                        led_blink((!AvhStatus << 1) + !AvhControl);
                                     } else {
                                         led_blink((AvhStatus << 1) + AvhControl);
                                     }
