@@ -280,7 +280,7 @@ int main(void)
                     case CAN_ID_AVH_STATUS:
                         AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
                         if(((rx_msg_data[5] & 0x20) == 0x20) ^ AvhStatus){
-                            AvhStatus = !AvhStatus;
+                            AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20);
                             if(Retry != 0 && Status == PROCESSING && AvhControl == AvhStatus){
                                 // Output Information message
                                 dprintf_("# INFO AVH %d(1:ON,0:OFF) succeeded. Retry: %d\n", AvhStatus, Retry);
@@ -325,11 +325,12 @@ int main(void)
                             } else {
                                 if(Status == CANCELLED || Status == FAILED){
                                     if(Led){
-                                        led_blink((!AvhStatus << 1) + !AvhControl);
+                                        led_blink(((!AvhStatus & 0x01) << 1) + (!AvhControl & 0x01);
+                                        Led = LED_OFF;
                                     } else {
                                         led_blink((AvhStatus << 1) + AvhControl);
+                                        Led = LED_ON;
                                     }
-                                    Led = !Led;
                                 }
                             }
                             
