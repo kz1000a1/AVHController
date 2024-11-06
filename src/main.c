@@ -136,6 +136,7 @@ int main(void)
     static uint8_t Door = DOOR_OPEN;
     static uint8_t Led = LED_OFF;
     static uint8_t EyeSight = HOLD_OFF;
+    static uint8_t AvhUnhold = HOLD_ON;
     static uint8_t Gear = SHIFT_P;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t Retry = 0;
@@ -307,6 +308,7 @@ int main(void)
                             SafetyBelt = BELT_OFF;
                             Door = DOOR_OPEN;
                             EyeSight = HOLD_OFF;
+                            AvhUnhold = HOLD_ON;
                             Gear = SHIFT_P;
                             Retry = 0;
                             Speed = 0;
@@ -322,52 +324,73 @@ int main(void)
                                     Led = LED_OFF;
                                     dprintf_("# INFO AVH control cancelled.\n");
                                 }
-                            } else {
-                                if(Status == CANCELLED || Status == FAILED){
-                                    if(Led){
-                                        led_blink(((!AvhStatus & 0x01) << 1) + (!AvhControl & 0x01));
-                                        Led = LED_OFF;
-                                    } else {
-                                        led_blink((AvhStatus << 1) + AvhControl);
-                                        Led = LED_ON;
-                                    }
-                                }
                             }
                             
-                            if(Status == PROCESSING){
-                                switch(AvhControlStatus){
-                                    case NOT_READY:
-                                    case ENGINE_STOP:
-                                        AvhControlStatus = READY;
-                                        break;
+                            switch(Ststus){
+                                case CANCELLED:
+                                case FAILED:
+                                    if((rx_msg_data[2] & 0x03) == 0x0){
+                                        if(Led){
+                                            led_blink(((!AvhStatus & 0x01) << 1) + (!AvhControl & 0x01));
+                                            Led = LED_OFF;
+                                        } else {
+                                            led_blink((AvhStatus << 1) + AvhControl);
+                                            Led = LED_ON;
+                                        }
+                                    }
+                                    break;
+                                case PROCESSING:
+                                    switch(AvhControlStatus){
+                                        case NOT_READY:
+                                        case ENGINE_STOP:
+                                            AvhControlStatus = READY;
+                                            break;
 
-                                    case READY:
-                                        if(AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
-                                            if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
-                                                // Output Warning message
-                                                Status = FAILED;
-                                                Led = LED_OFF;
-                                                dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
-                                            } else {
-                                                Retry++;
-                                                for(int i = 0;i < 2;i++){
-                                                    HAL_Delay(50);
-                                                    transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                        case READY:
+                                            if(AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
+                                                if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
+                                                    // Output Warning message
+                                                    Status = FAILED;
+                                                    Led = LED_OFF;
+                                                    dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
+                                                } else {
+                                                    Retry++;
+                                                    for(int i = 0;i < 2;i++){
+                                                        HAL_Delay(50);
+                                                        transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                                    }
+                                                    // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                                                    // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
+                                                    dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
+                                                    // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
+                                                    // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
+                                                    // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
+                                                    // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
+                                                    // dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
+                                                    // Discard message(s) that received during HAL_delay()
+                                                    while(is_can_msg_pending(CAN_RX_FIFO0)){
+                                                        can_rx(&rx_msg_header, rx_msg_data);
+                                                    }
+                                                    // rx_msg_header.StdId = CAN_ID_SHIFT;
                                                 }
-                                                // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                                                // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                                dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
-                                                // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
-                                                // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                                // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-                                                // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
-                                                // dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
-                                                // Discard message(s) that received during HAL_delay()
-                                                while(is_can_msg_pending(CAN_RX_FIFO0)){
-                                                    can_rx(&rx_msg_header, rx_msg_data);
-                                                }
-                                                rx_msg_header.StdId = CAN_ID_SHIFT;
                                             }
+                                            break;
+                                        }
+                                        break;
+                                
+                                    case SUCCEEDED:
+                                        if(AvhStatus == AVH_ON && AvhHold == HOLD_OFF){
+                                            if(AvhUnhold == HOLD_OFF){
+                                                AvhControl = AVH_OFF;
+                                                AvhUnhold = HOLD_ON;
+                                                Status = PROCESSING;
+                                                dprintf_("# INFO AVH unholded. AVH off.\n");
+                                                led_blink((AvhStatus << 1) + AvhControl);
+                                            } else {
+                                                AvhUnhold = HOLD_OFF;
+                                            }
+                                        } else {
+                                            AvhUnhold = HOLD_ON;
                                         }
                                         break;
                                 }
