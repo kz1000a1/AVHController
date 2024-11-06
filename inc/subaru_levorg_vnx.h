@@ -25,6 +25,7 @@
 #define CAN_ID_ACCEL       0x040
 #define CAN_ID_BELT        0x390
 #define CAN_ID_DOOR        0x3AC
+#define CAN_ID_EYESIGHT    0x321
 
 // Brake Pressure to Enable AVH
 #define BRAKE_HIGH 70
