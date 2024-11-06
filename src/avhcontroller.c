@@ -31,6 +31,7 @@ int8_t avhcontroller_parse_str(uint8_t *buf, uint8_t len)
     // Process command
     switch(buf[0])
     {
+	    /*
 		case 'm':
 		case 'M':
 			// Set mode command
@@ -68,6 +69,7 @@ int8_t avhcontroller_parse_str(uint8_t *buf, uint8_t len)
 			}
 			
 			break;
+	    */
 
 		case 'v':
 		case 'V':
