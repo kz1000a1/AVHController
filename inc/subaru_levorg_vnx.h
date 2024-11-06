@@ -41,28 +41,28 @@ enum avh_control_status {
 };
 
 // AVH STATUS
-#define AVH_OFF    false
-#define AVH_ON     true
+#define AVH_OFF    0
+#define AVH_ON     1
 
 // AVH HOLD STATUS
-#define HOLD_OFF   false
-#define HOLD_ON    true
+#define HOLD_OFF   0
+#define HOLD_ON    1
 
 // PARKING BRAKE
-#define BRAKE_OFF  false
-#define BRAKE_ON   true
+#define BRAKE_OFF  0
+#define BRAKE_ON   1
 
 // SAFETY_BELT
-#define BELT_OFF   false
-#define BELT_ON    true
+#define BELT_OFF   0
+#define BELT_ON    1
 
 // DOOR
-#define DOOR_OPEN  false
-#define DOOR_CLOSE true
+#define DOOR_OPEN  0
+#define DOOR_CLOSE 1
 
 // LED for DEBUG
-#define LED_ON     true
-#define LED_OFF    false
+#define LED_ON     0
+#define LED_OFF    1
 
 // STATUS
 enum status {
