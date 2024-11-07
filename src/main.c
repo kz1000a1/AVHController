@@ -328,7 +328,7 @@ int main(void)
                         Status = PROCESSING;
                         AvhControl = AVH_OFF;
                         PrevAvhStatus = AVH_OFF;
-                        AvhUnhold = HOLD_ON;
+                        AvhUnhold = HOLD;
                         Retry = 0;
                         PrevSpeed = 0;
                         PrevBrake = 0;
@@ -349,7 +349,7 @@ int main(void)
                                 if((rx_msg_data[2] & 0x03) == 0x0){
                                     if(Led){
                                         led_blink(((!VnxParam.AvhStatus & 0x01) << 1) + (!AvhControl & 0x01));
-                                        Led = LED_OFF;
+                                        Led = OFF;
                                     } else {
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                         Led = ON;
