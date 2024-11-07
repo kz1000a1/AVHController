@@ -384,6 +384,9 @@ int main(void)
                                             AvhUnhold = HOLD_ON;
                                         }
                                         break;
+                                    
+                                    default: // ENGINE_STOP
+                                        break;
                                 }
                                 break;
                         }
