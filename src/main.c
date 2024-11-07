@@ -268,7 +268,7 @@ int main(void)
                     break;
 
                 case CAN_ID_AVH_STATUS:
-                    if(((((rx_msg_data[5] & 0x20) == 0x20) ^ VnxParam.AvhStatus) && (rx_msg_data[5] & 0x20) == 0x20)) || ((((rx_msg_data[5] & 0x22) == 0x22) ^ VnxParam.AvhHold) && (rx_msg_data[5] & 0x22) == 0x22)){
+                    if(((((rx_msg_data[5] & 0x20) == 0x20) ^ VnxParam.AvhStatus) && ((rx_msg_data[5] & 0x20) == 0x20)) || ((((rx_msg_data[5] & 0x22) == 0x22) ^ VnxParam.AvhHold) && ((rx_msg_data[5] & 0x22) == 0x22))){
                         dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d=>%d\n", VnxParam.AvhStatus, (rx_msg_data[5] & 0x20) == 0x20, VnxParam.AvhHold, (rx_msg_data[5] & 0x22) == 0x22);
                     }
                     VnxParam.AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
