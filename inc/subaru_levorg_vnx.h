@@ -65,11 +65,13 @@ enum status {
 // AVH STATUS
 #define AVH_OFF    0b00
 #define AVH_ON     0b01
-#definr AVH_HOLD   0b11
+#define AVH_HOLD   0b11
 
+/*
 // AVH HOLD STATUS
 #define HOLD_OFF   0
 #define HOLD_ON    1
+*/
 
 // PARKING BRAKE
 #define BRAKE_OFF  0
