@@ -361,9 +361,10 @@ int main(void)
                                     if(AvhUnhold == HOLD_OFF){
                                         AvhControl = AVH_OFF;
                                         Status = PROCESSING;
-                                        dprintf_("# INFO AVH unholded. AVH off.\n");
+                                        dprintf_("# INFO AVH HOLD Failed. => AVH off.\n");
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                     } else {
+                                        dprintf_("# DEBUG AVH ON but UNHOLD.\n");
                                         AvhUnhold = HOLD_OFF;
                                     }
                                 } else {
