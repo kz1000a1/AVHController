@@ -204,7 +204,7 @@ int main(void)
                                    // VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH) ||
                                    VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH) ||
                                    // AVH HOLD OFF only
-                                   VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.Accel != 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN)
+                                   VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.Accel != 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN
                                   ){
                                     AvhControl = AVH_OFF;
                                     if(Status == SUCCEEDED){
