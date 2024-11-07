@@ -147,6 +147,7 @@ int main(void)
     static enum status Status = PROCESSING;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t AvhControl = AVH_OFF;
+    static uint8_t PrevAvhStatus = AVH_OFF;
     static uint8_t Retry = 0;
     static uint8_t Led = LED_OFF;
     static uint8_t AvhUnhold = HOLD_ON;
@@ -270,22 +271,24 @@ int main(void)
                     break;
 
                 case CAN_ID_AVH_STATUS:
-                    if(((VnxParam.AvhStatus == AVH_OFF) && ((rx_msg_data[5] & 0x20) == 0x20)) || ((VnxParam.Status == AVH_ON) && ((rx_msg_data[5] & 0x22) == 0x22))){
-                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON,3:HOLD)=>%d\n", VnxParam.AvhStatus, ((rx_msg_data[5] & 0x20) == 0x20) + (((rx_msg_data[5] & 0x22) == 0x22) << 1));
-                    }
-                    // VnxParam.AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
-                    if(((rx_msg_data[5] & 0x20) == 0x20) != (VnxParam.AvhStatus & 0b01)){
-                        VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20) + (((rx_msg_data[5] & 0x22) == 0x22) << 1);
-                        if(Retry != 0 && Status == PROCESSING && AvhControl == (VnxParam.AvhStatus & 0b1)){
-                            // Output Information message
-                            dprintf_("# INFO AVH %d(0:OFF,1:ON) succeeded. Retry: %d\n", AvhControl, Retry);
-                            Retry = 0;
-                            Status = SUCCEEDED;
-                            AvhControlStatus = READY;
-                            AvhUnhold = HOLD_ON;
-                        }
-                        if(Status != CANCELLED && Status != FAILED){
-                            led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                    PrevAvhStatus = VnxParam.AvhStatus;
+                    VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20) + (((rx_msg_data[5] & 0x22) == 0x22) << 1);
+
+                    if(PrevAvhStatus != VnxParam.AvhStatus){
+                        if((PrevAvhStatus & 0b1) != (VnxParam.AvhStatus & 0b01)){
+                            if(Retry != 0 && Status == PROCESSING && AvhControl == (VnxParam.AvhStatus & 0b1)){
+                                // Output Information message
+                                dprintf_("# INFO AVH %d(0:OFF,1:ON,3:HOLD) succeeded. Retry: %d\n", VnxParam.AvhStatus, Retry);
+                                Retry = 0;
+                                Status = SUCCEEDED;
+                                AvhControlStatus = READY;
+                                AvhUnhold = HOLD_ON;
+                            }
+                            if(Status != CANCELLED && Status != FAILED){
+                                led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                            }
+                        } else if(VnxParam.AvhStatus >> 1 != PrevAvhStatus >> 1){
+                            dprintf_("# DEBUG AVH HOLD: %d(0:OFF,1:ON)=>%d\n", PrevAvhStatus >> 1, VnxParam.AvhStatus >> 1);
                         }
                     }
 
@@ -297,6 +300,7 @@ int main(void)
                         AvhControlStatus = ENGINE_STOP;
                         Status = PROCESSING;
                         AvhControl = AVH_OFF;
+                        PrevAvhStatus = AVH_OFF;
                         AvhUnhold = HOLD_ON;
                         Retry = 0;
                         PrevSpeed = 0;
