@@ -237,7 +237,7 @@ int main(void)
 
                         case AVH_OFF:
                             if(AvhControl == AVH_OFF){
-                                if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == BRAKE_OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == BELT_ON && VnxParam.Door == DOOR_CLOSE && VnxParam.AvhHold == HOLD_OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == BRAKE_OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == BELT_ON && VnxParam.Door == DOOR_CLOSE && VnxParam.EyeSight == HOLD_OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                     AvhControl = AVH_ON;
                                     if(Status == SUCCEEDED){
                                         Status = PROCESSING;
