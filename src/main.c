@@ -110,15 +110,31 @@ void transmit_can_frame(uint8_t* rx_msg_data, uint8_t avh){
     // }
 }
 
-void print_param(float Speed, float PrevSpeed, float Accel, float Brake, float PrevBrake, float MaxBrake, uint8_t Gear, uint8_t ParkBrake, uint8_t AvhStatus, uint8_t AvhControl, uint8_t AvhHold, uint8_t Door, uint8_t SafetyBelt, uint8_t EyeSight){
-    dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-    dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-    dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
-    dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
-    dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-    dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-    dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SafetyBelt);
-    dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
+void init_param(struct param* CanParam){
+    CanParam.AvhStatus = AVH_OFF;
+    CanParam.AvhHold = HOLD_OFF;
+    CanParam.ParkBrake = BRAKE_ON;
+    CanParam.SafetyBelt = BELT_OFF;
+    CanParam.Door = DOOR_OPEN;
+    CanParam.EyeSight = HOLD_OFF;
+    CanParam.Gear = SHIFT_P;
+    CanParam.Speed = 0;
+    CanParam.PrevSpeed = 0;
+    CanParam.Brake = 0;
+    CanParam.MaxBrake = 0;
+    CanParam.PrevBrake = 0;
+    CanParam.Accel = 0;
+}
+
+void print_param(struct param* CanParam, uint8_t AvhControl){
+    dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)CanParam.Speed, (int)(CanParam.Speed * 100) % 100, (int)CanParam.PrevSpeed, (int)(CanParam.PrevSpeed * 100) % 100);
+    dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)CanParam.Accel, (int)(CanParam.Accel * 100) % 100);
+    dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)CanParam.Brake, (int)(CanParam.Brake * 100) % 100, (int)CanParam.PrevBrake, (int)(CanParam.PrevBrake * 100) % 100, (int)CanParam.MaxBrake, (int)(CanParam.MaxBrake * 100) % 100);
+    dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", CanParam.Gear);
+    dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", CanParam.ParkBrake);
+    dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", CanParam.AvhStatus, AvhControl, CanParam.AvhHold);
+    dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", CanParam.Door, CanParam.SeatBelt);
+    dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", CanParam.EyeSight);
 }
 
 void led_blink(enum status Status){
@@ -143,24 +159,30 @@ int main(void)
 
     static enum avh_control_status AvhControlStatus = ENGINE_STOP;
     static enum status Status = PROCESSING;
+    static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
+    static uint8_t AvhControl = AVH_OFF;
+    static uint8_t Retry = 0;
+    static uint8_t Led = LED_OFF;
+    static uint8_t AvhUnhold = HOLD_ON;
+    static float MaxBrake = 0;
+    static struct param CanParam;
+    
+    /*
     static uint8_t AvhStatus = AVH_OFF;
     static uint8_t AvhHold = HOLD_OFF;
-    static uint8_t AvhControl = AVH_OFF;
     static uint8_t ParkBrake = BRAKE_ON;
     static uint8_t SafetyBelt = BELT_OFF;
     static uint8_t Door = DOOR_OPEN;
-    static uint8_t Led = LED_OFF;
     static uint8_t EyeSight = HOLD_OFF;
-    static uint8_t AvhUnhold = HOLD_ON;
     static uint8_t Gear = SHIFT_P;
-    static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
-    static uint8_t Retry = 0;
     static float Speed = 0;
     static float PrevSpeed = 0;
     static float Brake = 0;
-    static float MaxBrake = 0;
     static float PrevBrake = 0;
     static float Accel = 0;
+    */
+
+    init_param(CanParam);
 
     // Initialize peripherals
     system_init();
@@ -322,16 +344,17 @@ int main(void)
                         if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
                             AvhControlStatus = ENGINE_STOP;
                             Status = PROCESSING;
+                            AvhControl = AVH_OFF;
+                            AvhUnhold = HOLD_ON;
+                            Retry = 0;
+                            
                             AvhStatus = AVH_OFF;
                             AvhHold = HOLD_OFF;
-                            AvhControl = AVH_OFF;
                             ParkBrake = BRAKE_ON;
-                            SafetyBelt = BELT_OFF;
+                            SeatBelt = BELT_OFF;
                             Door = DOOR_OPEN;
                             EyeSight = HOLD_OFF;
-                            AvhUnhold = HOLD_ON;
                             Gear = SHIFT_P;
-                            Retry = 0;
                             Speed = 0;
                             PrevSpeed = 0;
                             Brake = 0;
