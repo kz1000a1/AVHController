@@ -101,7 +101,7 @@ void transmit_can_frame(uint8_t* rx_msg_data, uint8_t avh){
 void init_param(struct param* VnxParam){
     VnxParam->AvhStatus = AVH_OFF;
     VnxParam->ParkBrake = ON;
-    VnxParam->SeatBelt = OFF;
+    VnxParam->SeatBelt = OPEN;
     VnxParam->Door = OPEN;
     VnxParam->EyeSight = UNHOLD;
     VnxParam->Gear = SHIFT_P;
@@ -118,7 +118,7 @@ void print_param(struct param* VnxParam, uint8_t AvhControl, float PrevSpeed, fl
     dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", VnxParam->ParkBrake);
     // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", VnxParam->AvhStatus, AvhControl, VnxParam->AvhHold);
     dprintf_("# DEBUG AVH: %d(0:OFF,1:ON,3:HOLD)=>%d\n", VnxParam->AvhStatus, AvhControl);
-    dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", VnxParam->Door, VnxParam->SeatBelt);
+    dprintf_("# DEBUG Door: %d(0:CLOSE,1:OPEN) / Belt: %d(0:CLOSE,1:OPEN)\n", VnxParam->Door, VnxParam->SeatBelt);
     dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", VnxParam->EyeSight);
 }
 
