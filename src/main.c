@@ -266,7 +266,7 @@ int main(void)
 
                 case CAN_ID_BELT:
                     VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) != 0x01);
-                    if(VnxParam.SeatBelt == BELT_OFF && (Status == FAILED || Status == CANCELLED)){
+                    if(VnxParam.SeatBelt == OFF && (Status == FAILED || Status == CANCELLED)){
                         AvhControl = (VnxParam.AvhStatus & 0b01);
                         Retry = 0;
                         Status = PROCESSING;
@@ -297,7 +297,7 @@ int main(void)
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
-                                AvhUnhold = HOLD_ON;
+                                AvhUnhold = HOLD;
                             }
                             if(Status != CANCELLED && Status != FAILED){
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
@@ -338,7 +338,7 @@ int main(void)
                         if((rx_msg_data[2] & 0x03) != 0x0){
                             if(Status != CANCELLED){
                                 Status = CANCELLED;
-                                Led = LED_OFF;
+                                Led = OFF;
                                 dprintf_("# INFO AVH control cancelled.\n");
                             }
                         }
@@ -397,18 +397,18 @@ int main(void)
 
                                     case READY:
                                         if(VnxParam.AvhStatus == AVH_ON){
-                                            if(AvhUnhold == HOLD_OFF){
+                                            if(AvhUnhold == UNHOLD){
                                                 AvhControl = AVH_OFF;
                                                 Status = PROCESSING;
                                                 dprintf_("# INFO AVH HOLD Failed. => AVH off.\n");
                                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                             } else {
                                                 dprintf_("# DEBUG AVH ON but UNHOLD.\n");
-                                                AvhUnhold = HOLD_OFF;
+                                                AvhUnhold = UNHOLD;
                                                 AvhControlStatus = WAIT;
                                             }
                                         } else {
-                                            AvhUnhold = HOLD_ON;
+                                            AvhUnhold = HOLD;
                                         }
                                         break;
                                     
