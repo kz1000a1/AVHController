@@ -368,7 +368,7 @@ int main(void)
                                             if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
                                                 // Output Warning message
                                                 Status = FAILED;
-                                                Led = LED_OFF;
+                                                Led = OFF;
                                                 dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
                                             } else {
                                                 Retry++;
