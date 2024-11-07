@@ -357,18 +357,27 @@ int main(void)
                                 break;
                                 
                             case SUCCEEDED:
-                                if(VnxParam.AvhStatus == AVH_ON && VnxParam.AvhHold == HOLD_OFF){
-                                    if(AvhUnhold == HOLD_OFF){
-                                        AvhControl = AVH_OFF;
-                                        Status = PROCESSING;
-                                        dprintf_("# INFO AVH HOLD Failed. => AVH off.\n");
-                                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                    } else {
-                                        dprintf_("# DEBUG AVH ON but UNHOLD.\n");
-                                        AvhUnhold = HOLD_OFF;
-                                    }
-                                } else {
-                                    AvhUnhold = HOLD_ON;
+                                switch(AvhControlStatus){
+                                    case NOT_READY:
+                                        AvhControlStatus = READY;
+                                        break;
+
+                                    case READY:
+                                        if(VnxParam.AvhStatus == AVH_ON && VnxParam.AvhHold == HOLD_OFF){
+                                            if(AvhUnhold == HOLD_OFF){
+                                                AvhControl = AVH_OFF;
+                                                Status = PROCESSING;
+                                                dprintf_("# INFO AVH HOLD Failed. => AVH off.\n");
+                                                led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                                            } else {
+                                                dprintf_("# DEBUG AVH ON but UNHOLD.\n");
+                                                AvhUnhold = HOLD_OFF;
+                                                AvhControlStatus = NOT_READY;
+                                            }
+                                        } else {
+                                            AvhUnhold = HOLD_ON;
+                                        }
+                                        break;
                                 }
                                 break;
                         }
