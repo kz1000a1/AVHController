@@ -67,9 +67,18 @@ enum status {
 #define AVH_HOLD   0b11
 
 // AVH HOLD STATUS
-#define HOLD_OFF   0
-#define HOLD_ON    1
+#define UNHOLD     0
+#define HOLD       1
 
+// DOOR
+#define OPEN       0
+#define CLOSE      1
+
+// PARKING BRAKE/SEAT BELT/DEBUG LED/EYESIGHT HOLD
+#define OFF        0
+#define ON         1
+
+/*
 // PARKING BRAKE
 #define BRAKE_OFF  0
 #define BRAKE_ON   1
@@ -78,13 +87,10 @@ enum status {
 #define BELT_OFF   0
 #define BELT_ON    1
 
-// DOOR
-#define DOOR_OPEN  0
-#define DOOR_CLOSE 1
-
 // LED for DEBUG
 #define LED_OFF    0
 #define LED_ON     1
+*/
 
 // SHIFT
 #define SHIFT_D 1
