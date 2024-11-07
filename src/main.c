@@ -198,15 +198,31 @@ int main(void)
 
                     switch (VnxParam.AvhStatus){
                         case AVH_ON:
-                        case AVH_HOLD:
                             if(AvhControl == AVH_ON){
                                 if(
                                    // Both AVH HOLD ON and OFF
-                                   (VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH)) ||
-                                   // AVH HOLD ON only
-                                   (VnxParam.AvhStatus == AVH_HOLD && VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake) ||
+                                   // VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH) ||
+                                   VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH) ||
                                    // AVH HOLD OFF only
-                                   (VnxParam.AvhStatus == AVH_ON && (VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN))
+                                   VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.Accel != 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN)
+                                  ){
+                                    AvhControl = AVH_OFF;
+                                    if(Status == SUCCEEDED){
+                                        Status = PROCESSING;
+                                    }
+                                    if(Status != CANCELLED && Status != FAILED){
+                                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                                    }
+                                    print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+                                }
+                            }
+                            break;
+                        
+                        case AVH_HOLD:
+                            if(AvhControl == AVH_ON){
+                                if(
+                                   // AVH HOLD ON only
+                                   VnxParam.AvhStatus == AVH_HOLD && VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake
                                   ){
                                     AvhControl = AVH_OFF;
                                     if(Status == SUCCEEDED){
@@ -289,6 +305,16 @@ int main(void)
                             }
                         } else {
                             if(VnxParam.AvhStatus >> 1 != PrevAvhStatus >> 1){
+                                if(PrevAvhStatus == AVH_HOLD){ // AVH_HOLD => AVH_ON
+                                    AvhControl = AVH_OFF;
+                                    if(Status == SUCCEEDED){
+                                        Status = PROCESSING;
+                                    }
+                                    if(Status != CANCELLED && Status != FAILED){
+                                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                                    }
+                                    print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+                                }
                                 dprintf_("# DEBUG AVH HOLD: %d(0:OFF,1:ON)=>%d\n", PrevAvhStatus >> 1, VnxParam.AvhStatus >> 1);
                             }
                         }
