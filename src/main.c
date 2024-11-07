@@ -2,7 +2,6 @@
 // AVH(Auto Vehicle Hold) auto introduce and remove system firmware for SUBARU Levorg VN5
 //
 
-// #include <stdbool.h>
 #include "stm32f0xx.h"
 #include "stm32f0xx_hal.h"
 
@@ -14,14 +13,6 @@
 #include "error.h"
 #include "printf.h"
 #include "subaru_levorg_vnx.h"
-
-/*
-#ifdef DEBUG_MODE
-    enum debug_mode DebugMode = DEBUG;
-#else
-    enum debug_mode DebugMode = NORMAL;
-#endif
-*/
 
 void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
     uint32_t CurrentTime;
@@ -44,7 +35,6 @@ void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
                                                 rx_msg_header->DLC);
     }
 }
-
 
 void print_tx_frame(CAN_TxHeaderTypeDef* tx_msg_header, uint8_t* tx_msg_data){
     uint32_t CurrentTime;
@@ -103,11 +93,9 @@ void transmit_can_frame(uint8_t* rx_msg_data, uint8_t avh){
                       tx_msg_data[7]) + SUM_CHECK_ADDER;
     can_tx(&tx_msg_header, tx_msg_data); // Queueing message
     can_process(); // Transmit message
-    // if(DebugMode == DEBUG){
 #ifdef DEBUG_MODE
     print_tx_frame(&tx_msg_header, tx_msg_data);
 #endif
-    // }
 }
 
 void init_param(struct param* VnxParam){
@@ -165,19 +153,6 @@ int main(void)
     static float PrevBrake = 0;
     static float MaxBrake = 0;
     static struct param VnxParam;
-    
-    /*
-    static uint8_t AvhStatus = AVH_OFF;
-    static uint8_t AvhHold = HOLD_OFF;
-    static uint8_t ParkBrake = BRAKE_ON;
-    static uint8_t SeatBelt = BELT_OFF;
-    static uint8_t Door = DOOR_OPEN;
-    static uint8_t EyeSight = HOLD_OFF;
-    static uint8_t Gear = SHIFT_P;
-    static float Speed = 0;
-    static float Brake = 0;
-    static float Accel = 0;
-    */
 
     init_param(&VnxParam);
 
@@ -201,254 +176,208 @@ int main(void)
         if(is_can_msg_pending(CAN_RX_FIFO0)){
             can_rx(&rx_msg_header, rx_msg_data);
             
-            /*
-            // if(DebugMode == CANDUMP || (DebugMode == DEBUG && (rx_msg_header.StdId == CAN_ID_SHIFT || rx_msg_header.StdId == CAN_ID_AVH_STATUS || rx_msg_header.StdId == CAN_ID_AVH_CONTROL || rx_msg_header.StdId == CAN_ID_SPEED || rx_msg_header.StdId == CAN_ID_ACCEL))){
-            if(DebugMode == CANDUMP){
-                print_rx_frame(&rx_msg_header, rx_msg_data);
-            }
-            */
-            
             if(rx_msg_header.RTR != CAN_RTR_DATA || rx_msg_header.DLC != 8){
                 continue;
             }
 
-            // if(DebugMode != CANDUMP){
-                switch (rx_msg_header.StdId){
-                    case CAN_ID_SPEED:
-                        PrevSpeed = VnxParam.Speed;
-                        PrevBrake = VnxParam.Brake;
-                        VnxParam.Speed = (rx_msg_data[2] + ((rx_msg_data[3] & 0x1f) << 8)) * 0.05625;
-                        VnxParam.Brake = rx_msg_data[5] / 0.8;
-                        if(100 < VnxParam.Brake){
-                            VnxParam.Brake = 100;
-                        }
-                        if(MaxBrake < VnxParam.Brake){
-                            MaxBrake = VnxParam.Brake;
-                        }
-                        VnxParam.ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
+            switch (rx_msg_header.StdId){
+                case CAN_ID_SPEED:
+                    PrevSpeed = VnxParam.Speed;
+                    PrevBrake = VnxParam.Brake;
+                    VnxParam.Speed = (rx_msg_data[2] + ((rx_msg_data[3] & 0x1f) << 8)) * 0.05625;
+                    VnxParam.Brake = rx_msg_data[5] / 0.8;
+                    if(100 < VnxParam.Brake){
+                        VnxParam.Brake = 100;
+                    }
+                    if(MaxBrake < VnxParam.Brake){
+                        MaxBrake = VnxParam.Brake;
+                    }
+                    VnxParam.ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
 
-                        switch (VnxParam.AvhStatus){
-                            case AVH_ON:
-                                if(AvhControl == AVH_ON){
-                                    if(
-                                       // Both AVH HOLD ON and OFF
-                                       (VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH)) ||
-                                       // AVH HOLD ON only
-                                       (VnxParam.AvhHold == HOLD_ON && VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake) ||
-                                       // AVH HOLD OFF only
-                                       (VnxParam.AvhHold == HOLD_OFF && (VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN))
-                                      ){
-                                        AvhControl = AVH_OFF;
-                                        if(Status == SUCCEEDED){
-                                            Status = PROCESSING;
-                                        }
-                                        if(Status != CANCELLED && Status != FAILED){
-                                            led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                        }
-
-                                        print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-                                        // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                                        // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                        // dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
-                                        // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
-                                        // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                        // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-                                        // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SeatBelt);
-                                        // dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
+                    switch (VnxParam.AvhStatus){
+                        case AVH_ON:
+                            if(AvhControl == AVH_ON){
+                                if(
+                                   // Both AVH HOLD ON and OFF
+                                   (VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH)) ||
+                                   // AVH HOLD ON only
+                                   (VnxParam.AvhHold == HOLD_ON && VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake) ||
+                                   // AVH HOLD OFF only
+                                   (VnxParam.AvhHold == HOLD_OFF && (VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN))
+                                  ){
+                                    AvhControl = AVH_OFF;
+                                    if(Status == SUCCEEDED){
+                                        Status = PROCESSING;
                                     }
-                                }
-                                break;
-
-                            case AVH_OFF:
-                                if(AvhControl == AVH_OFF){
-                                    if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == BRAKE_OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == BELT_ON && VnxParam.Door == DOOR_CLOSE && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
-                                        AvhControl = AVH_ON;
-                                        if(Status == SUCCEEDED){
-                                            Status = PROCESSING;
-                                        }
-                                        if(Status != CANCELLED && Status != FAILED){
-                                            led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                        }
-
-                                        print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-                                        // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                                        // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                        // dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
-                                        // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
-                                        // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                        // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-                                        // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SeatBelt);
-                                        // dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
+                                    if(Status != CANCELLED && Status != FAILED){
+                                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                     }
+                                    print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                 }
-                                break;
-                        }
+                            }
+                            break;
 
-                        PreviousCanId = rx_msg_header.StdId;
-                        break;
+                        case AVH_OFF:
+                            if(AvhControl == AVH_OFF){
+                                if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == BRAKE_OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == BELT_ON && VnxParam.Door == DOOR_CLOSE && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                    AvhControl = AVH_ON;
+                                    if(Status == SUCCEEDED){
+                                        Status = PROCESSING;
+                                    }
+                                    if(Status != CANCELLED && Status != FAILED){
+                                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                                    }
+                                    print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+                                }
+                            }
+                            break;
+                    }
 
-                    case CAN_ID_SHIFT:
-                        VnxParam.Gear = (rx_msg_data[3] & 0x07);
-                        PreviousCanId = rx_msg_header.StdId;
-                        break;
+                    PreviousCanId = rx_msg_header.StdId;
+                    break;
 
-                    case CAN_ID_ACCEL:
-                        VnxParam.Accel = rx_msg_data[4] / 2.55;
-                        PreviousCanId = rx_msg_header.StdId;
-                        break;
+                case CAN_ID_SHIFT:
+                    VnxParam.Gear = (rx_msg_data[3] & 0x07);
+                    PreviousCanId = rx_msg_header.StdId;
+                    break;
 
-                    case CAN_ID_BELT:
-                        VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) != 0x01);
-                        if(VnxParam.SeatBelt == BELT_OFF && (Status == FAILED || Status == CANCELLED)){
-                            AvhControl = VnxParam.AvhStatus;
+                case CAN_ID_ACCEL:
+                    VnxParam.Accel = rx_msg_data[4] / 2.55;
+                    PreviousCanId = rx_msg_header.StdId;
+                    break;
+
+                case CAN_ID_BELT:
+                    VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) != 0x01);
+                    if(VnxParam.SeatBelt == BELT_OFF && (Status == FAILED || Status == CANCELLED)){
+                        AvhControl = VnxParam.AvhStatus;
+                        Retry = 0;
+                        Status = PROCESSING;
+                        dprintf_("# INFO AVH control restarted.\n");
+                    }
+                    // PreviousCanId = rx_msg_header.StdId;
+                    break;
+
+                case CAN_ID_DOOR:
+                    VnxParam.Door = ((rx_msg_data[4] & 0x01) != 0x01);
+                    // PreviousCanId = rx_msg_header.StdId;
+                    break;
+
+                case CAN_ID_EYESIGHT:
+                    VnxParam.EyeSight = ((rx_msg_data[7] & 0x10) == 0x10);
+                    PreviousCanId = rx_msg_header.StdId;
+                    break;
+
+                case CAN_ID_AVH_STATUS:
+                    VnxParam.AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
+                    if(((rx_msg_data[5] & 0x20) == 0x20) ^ VnxParam.AvhStatus){
+                        VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20);
+                        if(Retry != 0 && Status == PROCESSING && AvhControl == VnxParam.AvhStatus){
+                            // Output Information message
+                            dprintf_("# INFO AVH %d(1:ON,0:OFF) succeeded. Retry: %d\n", VnxParam.AvhStatus, Retry);
                             Retry = 0;
-                            Status = PROCESSING;
-                            dprintf_("# INFO AVH control restarted.\n");
-                        }
-                        // PreviousCanId = rx_msg_header.StdId;
-                        break;
-
-                    case CAN_ID_DOOR:
-                        VnxParam.Door = ((rx_msg_data[4] & 0x01) != 0x01);
-                        // PreviousCanId = rx_msg_header.StdId;
-                        break;
-
-                    case CAN_ID_EYESIGHT:
-                        VnxParam.EyeSight = ((rx_msg_data[7] & 0x10) == 0x10);
-                        PreviousCanId = rx_msg_header.StdId;
-                        break;
-
-                    case CAN_ID_AVH_STATUS:
-                        VnxParam.AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
-                        if(((rx_msg_data[5] & 0x20) == 0x20) ^ VnxParam.AvhStatus){
-                            VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20);
-                            if(Retry != 0 && Status == PROCESSING && AvhControl == VnxParam.AvhStatus){
-                                // Output Information message
-                                dprintf_("# INFO AVH %d(1:ON,0:OFF) succeeded. Retry: %d\n", VnxParam.AvhStatus, Retry);
-                                Retry = 0;
-                                Status = SUCCEEDED;
-                                AvhControlStatus = READY;
-                                AvhUnhold = HOLD_ON;
-                            }
-                            if(Status != CANCELLED && Status != FAILED){
-                                led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                            }
-                        }
-
-                        // PreviousCanId = rx_msg_header.StdId;
-                        break;
-
-                    case CAN_ID_AVH_CONTROL:
-                        if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
-                            AvhControlStatus = ENGINE_STOP;
-                            Status = PROCESSING;
-                            AvhControl = AVH_OFF;
+                            Status = SUCCEEDED;
+                            AvhControlStatus = READY;
                             AvhUnhold = HOLD_ON;
-                            Retry = 0;
-                            PrevSpeed = 0;
-                            PrevBrake = 0;
-                            init_param(&VnxParam);
-                            
-                            // AvhStatus = AVH_OFF;
-                            // AvhHold = HOLD_OFF;
-                            // ParkBrake = BRAKE_ON;
-                            // SeatBelt = BELT_OFF;
-                            // Door = DOOR_OPEN;
-                            // EyeSight = HOLD_OFF;
-                            // Gear = SHIFT_P;
-                            // Speed = 0;
-                            // Brake = 0;
-                            // Accel = 0;
+                        }
+                        if(Status != CANCELLED && Status != FAILED){
                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                        } else {
-                            if((rx_msg_data[2] & 0x03) != 0x0){
-                                if(Status != CANCELLED){
-                                    Status = CANCELLED;
-                                    Led = LED_OFF;
-                                    dprintf_("# INFO AVH control cancelled.\n");
-                                }
-                            }
-                            
-                            switch(Status){
-                                case CANCELLED:
-                                case FAILED:
-                                    if((rx_msg_data[2] & 0x03) == 0x0){
-                                        if(Led){
-                                            led_blink(((!VnxParam.AvhStatus & 0x01) << 1) + (!AvhControl & 0x01));
-                                            Led = LED_OFF;
-                                        } else {
-                                            led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                            Led = LED_ON;
-                                        }
-                                    }
-                                    break;
-                                case PROCESSING:
-                                    switch(AvhControlStatus){
-                                        case NOT_READY:
-                                        case ENGINE_STOP:
-                                            AvhControlStatus = READY;
-                                            break;
+                        }
+                    }
 
-                                        case READY:
-                                            if(VnxParam.AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
-                                                if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
-                                                    // Output Warning message
-                                                    Status = FAILED;
-                                                    Led = LED_OFF;
-                                                    dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
-                                                } else {
-                                                    Retry++;
-                                                    for(int i = 0;i < 2;i++){
-                                                        HAL_Delay(50);
-                                                        transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
-                                                    }
+                    // PreviousCanId = rx_msg_header.StdId;
+                    break;
 
-                                                    print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-                                                    // dprintf_("# DEBUG Speed: %d.%02d(%d.%02d)km/h\n", (int)Speed, (int)(Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                                                    // dprintf_("# DEBUG Accel: %d.%02d%%\n", (int)Accel, (int)(Accel * 100) % 100);
-                                                    // dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)Brake, (int)(Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
-                                                    // dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", Gear);
-                                                    // dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", ParkBrake);
-                                                    // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", AvhStatus, AvhControl, AvhHold);
-                                                    // dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", Door, SeatBelt);
-                                                    // dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", EyeSight);
-                                                    // Discard message(s) that received during HAL_delay()
-                                                    while(is_can_msg_pending(CAN_RX_FIFO0)){
-                                                        can_rx(&rx_msg_header, rx_msg_data);
-                                                    }
-                                                    // rx_msg_header.StdId = CAN_ID_SHIFT;
-                                                }
-                                            }
-                                            break;
-                                    }
-                                    break;
-                                
-                                case SUCCEEDED:
-                                    if(VnxParam.AvhStatus == AVH_ON && VnxParam.AvhHold == HOLD_OFF){
-                                        if(AvhUnhold == HOLD_OFF){
-                                            AvhControl = AVH_OFF;
-                                            Status = PROCESSING;
-                                            dprintf_("# INFO AVH unholded. AVH off.\n");
-                                            led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                        } else {
-                                            AvhUnhold = HOLD_OFF;
-                                        }
-                                    } else {
-                                        AvhUnhold = HOLD_ON;
-                                    }
-                                    break;
+                case CAN_ID_AVH_CONTROL:
+                    if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
+                        AvhControlStatus = ENGINE_STOP;
+                        Status = PROCESSING;
+                        AvhControl = AVH_OFF;
+                        AvhUnhold = HOLD_ON;
+                        Retry = 0;
+                        PrevSpeed = 0;
+                        PrevBrake = 0;
+                        init_param(&VnxParam);
+                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                    } else {
+                        if((rx_msg_data[2] & 0x03) != 0x0){
+                            if(Status != CANCELLED){
+                                Status = CANCELLED;
+                                Led = LED_OFF;
+                                dprintf_("# INFO AVH control cancelled.\n");
                             }
                         }
-                        
-                        PreviousCanId = rx_msg_header.StdId;
-                        break;
+                            
+                        switch(Status){
+                            case CANCELLED:
+                            case FAILED:
+                                if((rx_msg_data[2] & 0x03) == 0x0){
+                                    if(Led){
+                                        led_blink(((!VnxParam.AvhStatus & 0x01) << 1) + (!AvhControl & 0x01));
+                                        Led = LED_OFF;
+                                    } else {
+                                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                                        Led = LED_ON;
+                                    }
+                                }
+                                break;
+                            case PROCESSING:
+                                switch(AvhControlStatus){
+                                    case NOT_READY:
+                                    case ENGINE_STOP:
+                                        AvhControlStatus = READY;
+                                        break;
 
-                    default: // Unexpected can id
-                        // Output Warning message
-                        // dprintf_("# Warning: Unexpected can id (0x%03x).\n", rx_msg_header.StdId);
-                        break;
-                }
-            // }
+                                    case READY:
+                                        if(VnxParam.AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
+                                            if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
+                                                // Output Warning message
+                                                Status = FAILED;
+                                                Led = LED_OFF;
+                                                dprintf_("# ERROR AVH %d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
+                                            } else {
+                                                Retry++;
+                                                for(int i = 0;i < 2;i++){
+                                                    HAL_Delay(50);
+                                                    transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                                }
+
+                                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+                                                // Discard message(s) that received during HAL_delay()
+                                                while(is_can_msg_pending(CAN_RX_FIFO0)){
+                                                    can_rx(&rx_msg_header, rx_msg_data);
+                                                }
+                                                // rx_msg_header.StdId = CAN_ID_SHIFT;
+                                            }
+                                        }
+                                        break;
+                                }
+                                break;
+                                
+                            case SUCCEEDED:
+                                if(VnxParam.AvhStatus == AVH_ON && VnxParam.AvhHold == HOLD_OFF){
+                                    if(AvhUnhold == HOLD_OFF){
+                                        AvhControl = AVH_OFF;
+                                        Status = PROCESSING;
+                                        dprintf_("# INFO AVH unholded. AVH off.\n");
+                                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                                    } else {
+                                        AvhUnhold = HOLD_OFF;
+                                    }
+                                } else {
+                                    AvhUnhold = HOLD_ON;
+                                }
+                                break;
+                        }
+                    }
+                        
+                    PreviousCanId = rx_msg_header.StdId;
+                    break;
+
+                default: // Unexpected can id
+                    // Output Warning message
+                    // dprintf_("# Warning: Unexpected can id (0x%03x).\n", rx_msg_header.StdId);
+                    break;
+            }
         }
     }
 }
