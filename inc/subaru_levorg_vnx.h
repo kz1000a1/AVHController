@@ -63,9 +63,9 @@ enum status {
 };
 
 // AVH STATUS
-#define AVH_OFF    0
-#define AVH_ON     1
-#definr AVH_HOLD   2
+#define AVH_OFF    0b00
+#define AVH_ON     0b01
+#definr AVH_HOLD   0b11
 
 // AVH HOLD STATUS
 #define HOLD_OFF   0
