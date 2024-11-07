@@ -203,7 +203,7 @@ int main(void)
                                    // VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH) ||
                                    VnxParam.ParkBrake == ON || VnxParam.EyeSight == HOLD ||
                                    // AVH HOLD OFF only
-                                   VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.Accel != 0.0 || VnxParam.SeatBelt == OFF || VnxParam.Door == OPEN
+                                   VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.Accel != 0.0 || VnxParam.SeatBelt == OPEN || VnxParam.Door == OPEN
                                   ){
                                     AvhControl = AVH_OFF;
                                     if(Status == SUCCEEDED){
@@ -237,7 +237,7 @@ int main(void)
 
                         case AVH_OFF:
                             if(AvhControl == AVH_OFF){
-                                if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == ON && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                     AvhControl = AVH_ON;
                                     if(Status == SUCCEEDED){
                                         Status = PROCESSING;
@@ -265,8 +265,8 @@ int main(void)
                     break;
 
                 case CAN_ID_BELT:
-                    VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) != 0x01);
-                    if(VnxParam.SeatBelt == OFF && (Status == FAILED || Status == CANCELLED)){
+                    VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) == 0x01);
+                    if(VnxParam.SeatBelt == OPEN && (Status == FAILED || Status == CANCELLED)){
                         AvhControl = (VnxParam.AvhStatus & 0b01);
                         Retry = 0;
                         Status = PROCESSING;
@@ -276,7 +276,7 @@ int main(void)
                     break;
 
                 case CAN_ID_DOOR:
-                    VnxParam.Door = ((rx_msg_data[4] & 0x01) != 0x01);
+                    VnxParam.Door = ((rx_msg_data[4] & 0x01) == 0x01);
                     // PreviousCanId = rx_msg_header.StdId;
                     break;
 
