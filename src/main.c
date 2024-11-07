@@ -100,7 +100,6 @@ void transmit_can_frame(uint8_t* rx_msg_data, uint8_t avh){
 
 void init_param(struct param* VnxParam){
     VnxParam->AvhStatus = AVH_OFF;
-    // VnxParam->AvhHold = HOLD_OFF;
     VnxParam->ParkBrake = BRAKE_ON;
     VnxParam->SeatBelt = BELT_OFF;
     VnxParam->Door = DOOR_OPEN;
