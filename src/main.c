@@ -100,7 +100,7 @@ void transmit_can_frame(uint8_t* rx_msg_data, uint8_t avh){
 
 void init_param(struct param* VnxParam){
     VnxParam->AvhStatus = AVH_OFF;
-    VnxParam->AvhHold = HOLD_OFF;
+    // VnxParam->AvhHold = HOLD_OFF;
     VnxParam->ParkBrake = BRAKE_ON;
     VnxParam->SeatBelt = BELT_OFF;
     VnxParam->Door = DOOR_OPEN;
@@ -117,7 +117,8 @@ void print_param(struct param* VnxParam, uint8_t AvhControl, float PrevSpeed, fl
     dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)VnxParam->Brake, (int)(VnxParam->Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
     dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", VnxParam->Gear);
     dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", VnxParam->ParkBrake);
-    dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", VnxParam->AvhStatus, AvhControl, VnxParam->AvhHold);
+    // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", VnxParam->AvhStatus, AvhControl, VnxParam->AvhHold);
+    dprintf_("# DEBUG AVH: %d(0:OFF,1:ON,3:HOLD)=>%d\n", VnxParam->AvhStatus, AvhControl);
     dprintf_("# DEBUG Door: %d(0:OPEN,1:CLOSE) / Belt: %d(0:OFF,1:ON)\n", VnxParam->Door, VnxParam->SeatBelt);
     dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", VnxParam->EyeSight);
 }
@@ -196,14 +197,15 @@ int main(void)
 
                     switch (VnxParam.AvhStatus){
                         case AVH_ON:
+                        case AVH_HOLD:
                             if(AvhControl == AVH_ON){
                                 if(
                                    // Both AVH HOLD ON and OFF
                                    (VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH)) ||
                                    // AVH HOLD ON only
-                                   (VnxParam.AvhHold == HOLD_ON && VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake) ||
+                                   (VnxParam.AvhStatus == AVH_HOLD && VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake) ||
                                    // AVH HOLD OFF only
-                                   (VnxParam.AvhHold == HOLD_OFF && (VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN))
+                                   (VnxParam.AvhStatus == AVH_ON && (VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN))
                                   ){
                                     AvhControl = AVH_OFF;
                                     if(Status == SUCCEEDED){
@@ -249,7 +251,7 @@ int main(void)
                 case CAN_ID_BELT:
                     VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) != 0x01);
                     if(VnxParam.SeatBelt == BELT_OFF && (Status == FAILED || Status == CANCELLED)){
-                        AvhControl = VnxParam.AvhStatus;
+                        AvhControl = (VnxParam.AvhStatus & 0b01);
                         Retry = 0;
                         Status = PROCESSING;
                         dprintf_("# INFO AVH control restarted.\n");
@@ -268,15 +270,15 @@ int main(void)
                     break;
 
                 case CAN_ID_AVH_STATUS:
-                    if(((((rx_msg_data[5] & 0x20) == 0x20) ^ VnxParam.AvhStatus) && ((rx_msg_data[5] & 0x20) == 0x20)) || ((((rx_msg_data[5] & 0x22) == 0x22) ^ VnxParam.AvhHold) && ((rx_msg_data[5] & 0x22) == 0x22))){
-                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d=>%d\n", VnxParam.AvhStatus, (rx_msg_data[5] & 0x20) == 0x20, VnxParam.AvhHold, (rx_msg_data[5] & 0x22) == 0x22);
+                    if(((VnxParam.AvhStatus == AVH_OFF) && ((rx_msg_data[5] & 0x20) == 0x20)) || ((VnxParam.Status == AVH_ON) && ((rx_msg_data[5] & 0x22) == 0x22))){
+                        dprintf_("# DEBUG AVH: %d(0:OFF,1:ON,3:HOLD)=>%d\n", VnxParam.AvhStatus, ((rx_msg_data[5] & 0x20) == 0x20) + (((rx_msg_data[5] & 0x22) == 0x22) << 1));
                     }
-                    VnxParam.AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
-                    if(((rx_msg_data[5] & 0x20) == 0x20) ^ VnxParam.AvhStatus){
-                        VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20);
-                        if(Retry != 0 && Status == PROCESSING && AvhControl == VnxParam.AvhStatus){
+                    // VnxParam.AvhHold = ((rx_msg_data[5] & 0x22) == 0x22);
+                    if(((rx_msg_data[5] & 0x20) == 0x20) != (VnxParam.AvhStatus & 0b01)){
+                        VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20) + (((rx_msg_data[5] & 0x22) == 0x22) << 1);
+                        if(Retry != 0 && Status == PROCESSING && AvhControl == (VnxParam.AvhStatus & 0b1)){
                             // Output Information message
-                            dprintf_("# INFO AVH %d(1:ON,0:OFF) succeeded. Retry: %d\n", VnxParam.AvhStatus, Retry);
+                            dprintf_("# INFO AVH %d(0:OFF,1:ON) succeeded. Retry: %d\n", AvhControl, Retry);
                             Retry = 0;
                             Status = SUCCEEDED;
                             AvhControlStatus = READY;
@@ -331,7 +333,7 @@ int main(void)
                                         break;
 
                                     case READY:
-                                        if(VnxParam.AvhStatus != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
+                                        if((VnxParam.AvhStatus & 0b01) != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
                                             if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
                                                 // Output Warning message
                                                 Status = FAILED;
@@ -363,7 +365,7 @@ int main(void)
                                         break;
 
                                     case READY:
-                                        if(VnxParam.AvhStatus == AVH_ON && VnxParam.AvhHold == HOLD_OFF){
+                                        if(VnxParam.AvhStatus == AVH_ON){
                                             if(AvhUnhold == HOLD_OFF){
                                                 AvhControl = AVH_OFF;
                                                 Status = PROCESSING;
