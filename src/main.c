@@ -116,7 +116,6 @@ void print_param(struct param* VnxParam, uint8_t AvhControl, float PrevSpeed, fl
     dprintf_("# DEBUG Brake: %d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)VnxParam->Brake, (int)(VnxParam->Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
     dprintf_("# DEBUG Gear: %d(1:D,2:N,3:R,4:P)\n", VnxParam->Gear);
     dprintf_("# DEBUG ParkBrake : %d(0:OFF,1:ON)\n", VnxParam->ParkBrake);
-    // dprintf_("# DEBUG AVH: %d(0:OFF,1:ON)=>%d / HOLD: %d\n", VnxParam->AvhStatus, AvhControl, VnxParam->AvhHold);
     dprintf_("# DEBUG AVH: %d(0:OFF,1:ON,3:HOLD)=>%d\n", VnxParam->AvhStatus, AvhControl);
     dprintf_("# DEBUG Door: %d(0:CLOSE,1:OPEN) / Belt: %d(0:CLOSE,1:OPEN)\n", VnxParam->Door, VnxParam->SeatBelt);
     dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", VnxParam->EyeSight);
@@ -200,7 +199,6 @@ int main(void)
                             if(AvhControl == AVH_ON){
                                 if(
                                    // Both AVH HOLD ON and OFF
-                                   // VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH) ||
                                    VnxParam.ParkBrake == ON || VnxParam.EyeSight == HOLD ||
                                    // AVH HOLD OFF only
                                    VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.Accel != 0.0 || VnxParam.SeatBelt == OPEN || VnxParam.Door == OPEN
@@ -323,7 +321,7 @@ int main(void)
                     break;
 
                 case CAN_ID_AVH_CONTROL:
-                    if(PreviousCanId == CAN_ID_AVH_CONTROL){ // TCU don't transmit message
+                    if(PreviousCanId == CAN_ID_AVH_CONTROL){ // Engine is stopped
                         AvhControlStatus = ENGINE_STOP;
                         Status = PROCESSING;
                         AvhControl = AVH_OFF;
@@ -348,7 +346,7 @@ int main(void)
                             case FAILED:
                                 if((rx_msg_data[2] & 0x03) == 0x0){
                                     if(Led){
-                                        led_blink(((!VnxParam.AvhStatus & 0x01) << 1) + (!AvhControl & 0x01));
+                                        led_blink((!VnxParam.AvhStatus << 1) + (!AvhControl & 0x01));
                                         Led = OFF;
                                     } else {
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
