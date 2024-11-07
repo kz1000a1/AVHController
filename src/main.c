@@ -325,8 +325,8 @@ int main(void)
                                 break;
                             case PROCESSING:
                                 switch(AvhControlStatus){
-                                    case NOT_READY:
                                     case ENGINE_STOP:
+                                    case WAIT:
                                         AvhControlStatus = READY;
                                         break;
 
@@ -358,7 +358,7 @@ int main(void)
                                 
                             case SUCCEEDED:
                                 switch(AvhControlStatus){
-                                    case NOT_READY:
+                                    case WAIT:
                                         AvhControlStatus = READY;
                                         break;
 
@@ -372,7 +372,7 @@ int main(void)
                                             } else {
                                                 dprintf_("# DEBUG AVH ON but UNHOLD.\n");
                                                 AvhUnhold = HOLD_OFF;
-                                                AvhControlStatus = NOT_READY;
+                                                AvhControlStatus = WAIT;
                                             }
                                         } else {
                                             AvhUnhold = HOLD_ON;
