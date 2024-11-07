@@ -148,8 +148,8 @@ int main(void)
     static uint8_t AvhControl = AVH_OFF;
     static uint8_t PrevAvhStatus = AVH_OFF;
     static uint8_t Retry = 0;
-    static uint8_t Led = LED_OFF;
-    static uint8_t AvhUnhold = HOLD_ON;
+    static uint8_t Led = OFF;
+    static uint8_t AvhUnhold = HOLD;
     static float PrevSpeed = 0;
     static float PrevBrake = 0;
     static float MaxBrake = 0;
@@ -201,9 +201,9 @@ int main(void)
                                 if(
                                    // Both AVH HOLD ON and OFF
                                    // VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON || ((VnxParam.Gear == SHIFT_D || VnxParam.Gear == SHIFT_R) && VnxParam.Accel != 0.0) || (VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0 && VnxParam.Brake < BRAKE_HIGH) ||
-                                   VnxParam.ParkBrake == BRAKE_ON || VnxParam.EyeSight == HOLD_ON ||
+                                   VnxParam.ParkBrake == ON || VnxParam.EyeSight == HOLD ||
                                    // AVH HOLD OFF only
-                                   VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.Accel != 0.0 || VnxParam.SeatBelt == BELT_OFF || VnxParam.Door == DOOR_OPEN
+                                   VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0 || VnxParam.Accel != 0.0 || VnxParam.SeatBelt == OFF || VnxParam.Door == OPEN
                                   ){
                                     AvhControl = AVH_OFF;
                                     if(Status == SUCCEEDED){
@@ -237,7 +237,7 @@ int main(void)
 
                         case AVH_OFF:
                             if(AvhControl == AVH_OFF){
-                                if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == BRAKE_OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == BELT_ON && VnxParam.Door == DOOR_CLOSE && VnxParam.EyeSight == HOLD_OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == ON && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                     AvhControl = AVH_ON;
                                     if(Status == SUCCEEDED){
                                         Status = PROCESSING;
@@ -352,7 +352,7 @@ int main(void)
                                         Led = LED_OFF;
                                     } else {
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                        Led = LED_ON;
+                                        Led = ON;
                                     }
                                 }
                                 break;
