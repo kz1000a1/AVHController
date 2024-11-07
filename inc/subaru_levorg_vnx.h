@@ -37,10 +37,7 @@ struct param{
     uint8_t EyeSight;
     uint8_t Gear;
     float Speed;
-    float PrevSpeed;
     float Brake;
-    float MaxBrake;
-    float PrevBrake;
     float Accel;
 };
 
