@@ -222,7 +222,7 @@ int main(void)
                             if(AvhControl == AVH_ON){
                                 if(
                                    // AVH HOLD ON only
-                                   VnxParam.AvhStatus == AVH_HOLD && VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake
+                                   VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake
                                   ){
                                     AvhControl = AVH_OFF;
                                     if(Status == SUCCEEDED){
@@ -291,7 +291,7 @@ int main(void)
                     VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20) + (((rx_msg_data[5] & 0x22) == 0x22) << 1);
 
                     if(PrevAvhStatus != VnxParam.AvhStatus){
-                        if((PrevAvhStatus & 0b1) != (VnxParam.AvhStatus & 0b01)){
+                        if((PrevAvhStatus & 0b1) != (VnxParam.AvhStatus & 0b01)){ // AVH_OFF <=> AVH_ON/AVH_HOLD
                             if(Retry != 0 && Status == PROCESSING && AvhControl == (VnxParam.AvhStatus & 0b1)){
                                 // Output Information message
                                 dprintf_("# INFO AVH %d(0:OFF,1:ON,3:HOLD) succeeded. Retry: %d\n", VnxParam.AvhStatus, Retry);
@@ -304,7 +304,7 @@ int main(void)
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                             }
                         } else {
-                            if(VnxParam.AvhStatus >> 1 != PrevAvhStatus >> 1){
+                            if(VnxParam.AvhStatus >> 1 != PrevAvhStatus >> 1){ // AVH_ON <=> AVH_HOLD
                                 if(PrevAvhStatus == AVH_HOLD){ // AVH_HOLD => AVH_ON
                                     AvhControl = AVH_OFF;
                                     if(Status == SUCCEEDED){
