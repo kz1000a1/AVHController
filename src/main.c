@@ -287,8 +287,10 @@ int main(void)
                             if(Status != CANCELLED && Status != FAILED){
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                             }
-                        } else if(VnxParam.AvhStatus >> 1 != PrevAvhStatus >> 1){
-                            dprintf_("# DEBUG AVH HOLD: %d(0:OFF,1:ON)=>%d\n", PrevAvhStatus >> 1, VnxParam.AvhStatus >> 1);
+                        } else {
+                            if(VnxParam.AvhStatus >> 1 != PrevAvhStatus >> 1){
+                                dprintf_("# DEBUG AVH HOLD: %d(0:OFF,1:ON)=>%d\n", PrevAvhStatus >> 1, VnxParam.AvhStatus >> 1);
+                            }
                         }
                     }
 
