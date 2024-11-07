@@ -78,20 +78,6 @@ enum status {
 #define OFF        0
 #define ON         1
 
-/*
-// PARKING BRAKE
-#define BRAKE_OFF  0
-#define BRAKE_ON   1
-
-// SAFETY_BELT
-#define BELT_OFF   0
-#define BELT_ON    1
-
-// LED for DEBUG
-#define LED_OFF    0
-#define LED_ON     1
-*/
-
 // SHIFT
 #define SHIFT_D 1
 #define SHIFT_N 2
