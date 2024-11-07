@@ -30,7 +30,6 @@
 
 struct param{
     uint8_t AvhStatus;
-    uint8_t AvhHold;
     uint8_t ParkBrake;
     uint8_t SeatBelt;
     uint8_t Door;
@@ -42,7 +41,7 @@ struct param{
 };
 
 // Brake Pressure to Enable AVH
-#define BRAKE_HIGH 70
+#define BRAKE_HIGH 60
 
 // Brake Pressure to Disable AVH
 #define BRAKE_LOW  10
