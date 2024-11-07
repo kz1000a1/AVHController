@@ -107,24 +107,6 @@ void can_disable(void)
     }
 }
 
-/*
-// Enable the CAN filter
-void can_filter_enable(void)
-{
-	can_disable();
-        filter.FilterMaskIdHigh = ((~(CAN_ID_AVH_CONTROL ^ CAN_ID_AVH_STATUS)) << 5) | 0x8;
-	can_enable();
-}
-
-
-// Disble the CAN filter
-void can_filter_disable(void)
-{
-	can_disable();
-        filter.FilterMaskIdHigh = 0x8;
-	can_enable();
-}
-*/
 
 // Set the bitrate of the CAN peripheral
 void can_set_bitrate(enum can_bitrate bitrate)
