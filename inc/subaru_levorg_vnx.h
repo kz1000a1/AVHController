@@ -71,8 +71,8 @@ enum status {
 #define HOLD       1
 
 // DOOR
-#define OPEN       0
-#define CLOSE      1
+#define OPEN       1
+#define CLOSE      0
 
 // PARKING BRAKE/SEAT BELT/DEBUG LED/EYESIGHT HOLD
 #define OFF        0
