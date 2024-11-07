@@ -50,8 +50,16 @@ struct param{
 // AVH CONTROL STATUS
 enum avh_control_status {
     ENGINE_STOP,
-    NOT_READY,
+    WAIT,
     READY
+};
+
+// STATUS
+enum status {
+    PROCESSING,
+    CANCELLED,
+    FAILED,
+    SUCCEEDED
 };
 
 // AVH STATUS
@@ -78,30 +86,11 @@ enum avh_control_status {
 #define LED_OFF    0
 #define LED_ON     1
 
-// STATUS
-enum status {
-    PROCESSING,
-    CANCELLED,
-    FAILED,
-    SUCCEEDED
-};
-
 // SHIFT
 #define SHIFT_D 1
 #define SHIFT_N 2
 #define SHIFT_R 3
 #define SHIFT_P 4
-
-/*
-// MODE
-enum debug_mode {
-    NORMAL,
-    DEBUG,
-    CANDUMP
-};
-
-extern enum debug_mode DebugMode;
-*/
 
 // for Calculate Check Sum
 #define SUM_CHECK_ADDER (-0x3F)
