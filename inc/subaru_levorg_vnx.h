@@ -28,6 +28,22 @@
 #define CAN_ID_DOOR        0x3AC
 #define CAN_ID_EYESIGHT    0x321
 
+struct param{
+    uint8_t AvhStatus;
+    uint8_t AvhHold;
+    uint8_t ParkBrake;
+    uint8_t SeatBelt;
+    uint8_t Door;
+    uint8_t EyeSight;
+    uint8_t Gear;
+    float Speed;
+    float PrevSpeed;
+    float Brake;
+    float MaxBrake;
+    float PrevBrake;
+    float Accel;
+};
+
 // Brake Pressure to Enable AVH
 #define BRAKE_HIGH 70
 
