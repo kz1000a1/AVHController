@@ -291,7 +291,7 @@ int main(void)
                     PrevAvhStatus = VnxParam.AvhStatus;
                     VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20) + (((rx_msg_data[5] & 0x22) == 0x22) << 1);
 
-                    if(PrevAvhStatus != VnxParam.AvhStatus){
+                    // if(PrevAvhStatus != VnxParam.AvhStatus){
                         if((PrevAvhStatus & 0b1) != (VnxParam.AvhStatus & 0b01)){ // AVH_OFF <=> AVH_ON/AVH_HOLD
                             if(Retry != 0 && Status == PROCESSING && AvhControl == (VnxParam.AvhStatus & 0b1)){
                                 // Output Information message
@@ -320,7 +320,7 @@ int main(void)
                             }
                         */
                         }
-                    }
+                    // }
 
                     // PreviousCanId = rx_msg_header.StdId;
                     break;
