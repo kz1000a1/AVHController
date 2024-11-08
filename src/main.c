@@ -220,7 +220,7 @@ int main(void)
                         case AVH_OFF:
                             switch(ReleaseFlag){
                                 case RELEASE:
-                                    if(VnxParam.Gear == SHIFT_D && VnxParam.Brake != 0.0){
+                                    if(VnxParam.Brake != 0.0){
                                         ReleaseFlag = BLOCK; // AVH HOLD Unavailable
                                     } else {
                                         ReleaseFlag = CLEAR; // AVH HOLD Available
@@ -229,7 +229,7 @@ int main(void)
                                     break;
 
                                 case BLOCK:
-                                    if(VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0){
+                                    if(VnxParam.Brake == 0.0){
                                         ReleaseFlag = CLEAR; // AVH HOLD Available
                                         dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
                                     }
@@ -256,7 +256,7 @@ int main(void)
                         case AVH_ON:
                             switch(ReleaseFlag){
                                 case RELEASE:
-                                    if(VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0){
+                                    if(VnxParam.Brake == 0.0){
                                         ReleaseFlag = CLEAR; // AVH HOLD Available
                                         dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
                                     }
