@@ -389,12 +389,31 @@ int main(void)
                                 
                             case SUCCEEDED:
                                 switch(AvhControlStatus){
-                                    case WAIT:
-                                        AvhControlStatus = READY;
-                                        break;
+                                    // case WAIT:
+                                        // AvhControlStatus = READY;
+                                        // break;
+                                    
 
                                     case READY:
                                         if(VnxParam.AvhStatus == AVH_ON){
+                                            AvhControl = AVH_OFF;
+                                            Status = PROCESSING;
+                                            dprintf_("# INFO AVH HOLD Failed. => AVH off.\n");
+                                            led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                                            
+                                            Retry++;
+                                            for(int i = 0;i < 2;i++){
+                                                HAL_Delay(50);
+                                                transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                            }
+
+                                            print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+                                            // Discard message(s) that received during HAL_delay()
+                                            while(is_can_msg_pending(CAN_RX_FIFO0)){
+                                                can_rx(&rx_msg_header, rx_msg_data);
+                                            }
+                                            // rx_msg_header.StdId = CAN_ID_SHIFT;
+                                            /*
                                             if(AvhHold == UNHOLD){
                                                 AvhControl = AVH_OFF;
                                                 Status = PROCESSING;
@@ -407,6 +426,7 @@ int main(void)
                                             }
                                         } else {
                                             AvhHold = HOLD;
+                                        */
                                         }
                                         break;
                                     
