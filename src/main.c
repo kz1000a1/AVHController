@@ -148,7 +148,7 @@ int main(void)
     static uint8_t PrevAvhStatus = AVH_OFF;
     static uint8_t Retry = 0;
     static uint8_t Led = OFF;
-    static uint8_t AvhHold = HOLD;
+    // static uint8_t AvhHold = HOLD;
     static float PrevSpeed = 0;
     static float PrevBrake = 0;
     static float MaxBrake = 0;
@@ -295,7 +295,7 @@ int main(void)
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
-                                AvhHold = HOLD;
+                                // AvhHold = HOLD;
                             }
                             if(Status != CANCELLED && Status != FAILED){
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
@@ -326,7 +326,7 @@ int main(void)
                         Status = PROCESSING;
                         AvhControl = AVH_OFF;
                         PrevAvhStatus = AVH_OFF;
-                        AvhHold = HOLD;
+                        // AvhHold = HOLD;
                         Retry = 0;
                         PrevSpeed = 0;
                         PrevBrake = 0;
