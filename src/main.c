@@ -148,7 +148,6 @@ int main(void)
     static uint8_t PrevAvhStatus = AVH_OFF;
     static uint8_t Retry = 0;
     static uint8_t Led = OFF;
-    // static uint8_t AvhHold = HOLD;
     static float PrevSpeed = 0;
     static float PrevBrake = 0;
     static float MaxBrake = 0;
@@ -295,7 +294,6 @@ int main(void)
                                 Retry = 0;
                                 Status = SUCCEEDED;
                                 AvhControlStatus = READY;
-                                // AvhHold = HOLD;
                             }
                             if(Status != CANCELLED && Status != FAILED){
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
@@ -326,7 +324,6 @@ int main(void)
                         Status = PROCESSING;
                         AvhControl = AVH_OFF;
                         PrevAvhStatus = AVH_OFF;
-                        // AvhHold = HOLD;
                         Retry = 0;
                         PrevSpeed = 0;
                         PrevBrake = 0;
@@ -404,7 +401,7 @@ int main(void)
                                             Retry++;
                                             for(int i = 0;i < 2;i++){
                                                 HAL_Delay(50);
-                                                transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
+                                                transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for remove AVH
                                             }
 
                                             print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
@@ -413,20 +410,6 @@ int main(void)
                                                 can_rx(&rx_msg_header, rx_msg_data);
                                             }
                                             // rx_msg_header.StdId = CAN_ID_SHIFT;
-                                            /*
-                                            if(AvhHold == UNHOLD){
-                                                AvhControl = AVH_OFF;
-                                                Status = PROCESSING;
-                                                dprintf_("# INFO AVH HOLD Failed. => AVH off.\n");
-                                                led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                            } else {
-                                                dprintf_("# DEBUG AVH ON but UNHOLD.\n");
-                                                AvhHold = UNHOLD;
-                                                AvhControlStatus = WAIT;
-                                            }
-                                        } else {
-                                            AvhHold = HOLD;
-                                        */
                                         }
                                         break;
                                     
