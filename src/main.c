@@ -198,7 +198,7 @@ int main(void)
                         case AVH_HOLD:
                             if(AvhControl == AVH_ON){
                                 if(VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0){
-                                    ReleaseFlag = RELEASE;
+                                    ReleaseFlag = RELEASE; // AVH HOLD Released by Brake
                                     dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
                                 }
                                 if(
@@ -219,13 +219,26 @@ int main(void)
 
                         case AVH_OFF:
                             if(AvhControl == AVH_OFF){
-                                if(ReleaseFlag == RELEASE){
-                                    if(VnxParam.Gear == SHIFT_D && VnxParam.Brake != 0.0){
-                                        ReleaseFlag = BLOCK;
-                                    } else {
-                                        ReleaseFlag = CLEAR;
-                                    }
-                                    dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                switch(ReleaseFlag){
+                                    case RELEASE:
+                                        if(VnxParam.Gear == SHIFT_D && VnxParam.Brake != 0.0){
+                                            ReleaseFlag = BLOCK; // AVH HOLD Unavailable
+                                        } else {
+                                            ReleaseFlag = CLEAR; // AVH HOLD Available
+                                        }
+                                        dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                        break;
+
+                                    case BLOCK:
+                                        if(VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0){
+                                            ReleaseFlag = CLEAR; // AVH HOLD Available
+                                            dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                        }
+                                        break;
+
+                                    default: // CLEAR
+                                        break;
+                                    
                                 }
                                 if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                     AvhControl = AVH_ON;
