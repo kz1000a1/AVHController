@@ -253,7 +253,7 @@ int main(void)
                             }
                             break;
                         
-                        AVH_ON:
+                        case AVH_ON:
                             switch(ReleaseFlag){
                                 case RELEASE:
                                     if(VnxParam.Gear != SHIFT_D || VnxParam.Brake == 0.0){
