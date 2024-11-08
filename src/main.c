@@ -148,6 +148,7 @@ int main(void)
     static uint8_t PrevAvhStatus = AVH_OFF;
     static uint8_t Retry = 0;
     static uint8_t Led = OFF;
+    static uint8_t ReleaseFlag = CLEAR;
     static float PrevSpeed = 0;
     static float PrevBrake = 0;
     static float MaxBrake = 0;
@@ -196,6 +197,10 @@ int main(void)
                     switch (VnxParam.AvhStatus){
                         case AVH_HOLD:
                             if(AvhControl == AVH_ON){
+                                if(VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0){
+                                    ReleaseFlag = RELEASE;
+                                    dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                }
                                 if(
                                    // AVH HOLD only
                                    VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake
@@ -214,6 +219,14 @@ int main(void)
 
                         case AVH_OFF:
                             if(AvhControl == AVH_OFF){
+                                if(ReleaseFlag == RELEASE){
+                                    if(VnxParam.Gear == SHIFT_D && VnxParam.Brake != 0.0){
+                                        ReleaseFlag = BLOCK;
+                                    } else {
+                                        ReleaseFlag = CLEAR;
+                                    }
+                                    dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                }
                                 if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                     AvhControl = AVH_ON;
                                     if(Status == SUCCEEDED){
@@ -280,7 +293,17 @@ int main(void)
                         if(Status != CANCELLED && Status != FAILED){
                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                         }
-                    }
+                    } else {
+                        if((PrevAvhStatus == AVH_HOLD) && (VnxParam.AvhStatus == AVH_ON)){ // AVH_HOLD => AVH_ON
+                            AvhControl = AVH_OFF;
+                            if(Status == SUCCEEDED){
+                                Status = PROCESSING;
+                            }
+                            if(Status != CANCELLED && Status != FAILED){
+                                led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                            }
+                            dprintf_("# INFO AVH HOLD Released. Flag:%d(0:C,1:R,2:B) => AVH off.\n", ReleaseFlag);
+                        }
 
                     // PreviousCanId = rx_msg_header.StdId;
                     break;
@@ -292,6 +315,7 @@ int main(void)
                         AvhControl = AVH_OFF;
                         PrevAvhStatus = AVH_OFF;
                         Retry = 0;
+                        ReleaseFlag = CLEAR;
                         PrevSpeed = 0;
                         PrevBrake = 0;
                         init_param(&VnxParam);
@@ -357,7 +381,7 @@ int main(void)
                                         if(VnxParam.AvhStatus == AVH_ON){
                                             AvhControl = AVH_OFF;
                                             Status = PROCESSING;
-                                            dprintf_("# INFO AVH HOLD Released or Failed. => AVH off.\n");
+                                            dprintf_("# INFO AVH HOLD Failed. Flag:%d(0:C,1:R,2:B) => AVH off.\n", ReleaseFlag);
                                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                             
                                             Retry++;
