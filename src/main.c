@@ -304,6 +304,7 @@ int main(void)
                             }
                             dprintf_("# INFO AVH HOLD Released. Flag:%d(0:C,1:R,2:B) => AVH off.\n", ReleaseFlag);
                         }
+                    }
 
                     // PreviousCanId = rx_msg_header.StdId;
                     break;
