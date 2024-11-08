@@ -194,6 +194,7 @@ int main(void)
                     VnxParam.ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
 
                     switch (VnxParam.AvhStatus){
+                        /*
                         case AVH_ON:
                             if(AvhControl == AVH_ON){
                                 if(
@@ -213,6 +214,7 @@ int main(void)
                                 }
                             }
                             break;
+                        */
                         
                         case AVH_HOLD:
                             if(AvhControl == AVH_ON){
@@ -245,6 +247,9 @@ int main(void)
                                     print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                 }
                             }
+                            break;
+                        
+                        default: // AVH_ON
                             break;
                     }
 
@@ -298,6 +303,7 @@ int main(void)
                             if(Status != CANCELLED && Status != FAILED){
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                             }
+                        /*
                         } else {
                             if(VnxParam.AvhStatus >> 1 != PrevAvhStatus >> 1){ // AVH_ON <=> AVH_HOLD
                                 if(PrevAvhStatus == AVH_HOLD){ // AVH_HOLD => AVH_ON
@@ -312,6 +318,7 @@ int main(void)
                                 }
                                 dprintf_("# DEBUG AVH HOLD: %d(0:OFF,1:ON)=>%d\n", PrevAvhStatus >> 1, VnxParam.AvhStatus >> 1);
                             }
+                        */
                         }
                     }
 
@@ -395,7 +402,7 @@ int main(void)
                                         if(VnxParam.AvhStatus == AVH_ON){
                                             AvhControl = AVH_OFF;
                                             Status = PROCESSING;
-                                            dprintf_("# INFO AVH HOLD Failed. => AVH off.\n");
+                                            dprintf_("# INFO AVH HOLD Released or Failed. => AVH off.\n");
                                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                             
                                             Retry++;
