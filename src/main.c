@@ -314,7 +314,7 @@ int main(void)
                     if((PrevAvhStatus & 0b1) != (VnxParam.AvhStatus & 0b01)){ // AVH_OFF <=> AVH_ON/AVH_HOLD
                         if(Retry != 0 && Status == PROCESSING && AvhControl == (VnxParam.AvhStatus & 0b1)){
                             // Output Information message
-                            dprintf_("# INFO AVH %d(0:OFF,1:ON,3:HOLD) succeeded. Retry: %d\n", VnxParam.AvhStatus, Retry);
+                            dprintf_("# INFO AVH:%d(0:OFF,1:ON,3:HOLD) succeeded. Retry: %d\n", VnxParam.AvhStatus, Retry);
                             Retry = 0;
                             Status = SUCCEEDED;
                             AvhControlStatus = READY;
@@ -350,6 +350,7 @@ int main(void)
                         PrevBrake = 0;
                         init_param(&VnxParam);
                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                        dprintf_("# INFO AVH ENGINE STOP.\n");
                     } else {
                         if((rx_msg_data[2] & 0x03) != 0x0){
                             if(Status != CANCELLED){
@@ -374,6 +375,8 @@ int main(void)
                                 break;
                             
                             case PROCESSING:
+                                dprintf_("# DEBUG PROCESSING Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                 switch(AvhControlStatus){
                                     case READY:
                                         if((VnxParam.AvhStatus & 0b01) != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
@@ -406,7 +409,7 @@ int main(void)
                                 break;
                                 
                             case SUCCEEDED:
-                                dprintf_("# DEBUG SUCCEEDED Flag:%d(0:C,1:R,2:B) => AVH off.\n", ReleaseFlag);
+                                dprintf_("# DEBUG SUCCEEDED Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
                                 print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
 
                                 switch(AvhControlStatus){
