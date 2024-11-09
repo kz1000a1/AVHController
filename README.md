@@ -12,16 +12,12 @@ By using any code in this project you assume any and all risk, and release any l
 ## Supported Commands
 
 These commands are only accepted in debug mode.
-For enable debug mode, you can compile using `make -B DEBUG_MODE=1`.
+For enable debug mode, you can compile using `make -B DEBUG_MODE=1`.In debug mode, debug messages are printed to the serial port.
 If you do not connect the USB CDC port to the host computer (SmartPhone's OTG port,Personal Computer ...), the debug mode will not work properly.
 
-- `M0` - Set mode to AVH Controller mode
-- `M1` - Set mode to AVH Controller with Debug Message output to USB CDC port (default)
-- `M2` - Disable Engine AVH Controller function and dump can bus traffic with candump log formatted output to USB CDC port
 - `V` - Returns firmware version and remote path as a string
 
-This firmware currently does not provide any ACK/NACK feedback for serial commands.
-
+This firmware currently does not provide any ACK/NACK feedback f
 ## Building
 
 Firmware builds with GCC. Specifically, you will need gcc-arm-none-eabi, which
