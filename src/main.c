@@ -379,6 +379,11 @@ int main(void)
                             case PROCESSING:
                                 switch(AvhControlStatus){
                                     case READY:
+                                        if(VnxParam.AvhStatus == AVH_HOLD && AvhControl == AVH_OFF && VnxParam.Gear != SHIFT_D && VnxParam.Brake < BRAKE_LOW){
+                                            dprintf_("# INFO AVH OFF Request Cancelled. Retry: %d\n", Retry);
+                                            print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+                                            AvhControl = AVH_ON;
+                                        }
                                         if((VnxParam.AvhStatus & 0b01) != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
                                             if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
                                                 // Output Warning message
@@ -391,13 +396,11 @@ int main(void)
                                                     HAL_Delay(50);
                                                     transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for introduce or remove AVH
                                                 }
-
-                                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                                 // Discard message(s) that received during HAL_delay()
                                                 while(is_can_msg_pending(CAN_RX_FIFO0)){
                                                     can_rx(&rx_msg_header, rx_msg_data);
                                                 }
-                                                // rx_msg_header.StdId = CAN_ID_SHIFT;
+                                                // rx_msg_header.StdId = CAN_ID_SHIFT
                                             }
                                         }
                                         break;
