@@ -421,7 +421,7 @@ int main(void)
                                         if(VnxParam.AvhStatus == AVH_ON){
                                             AvhControl = AVH_OFF;
                                             ProgStatus = PROCESSING;
-                                            dprintf_("# ERROR AVH HOLD Failed. ReleaseFlag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                            dprintf_("# INFO Restarted or HOLD Failed. ReleaseFlag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
                                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                             
                                             Retry++;
