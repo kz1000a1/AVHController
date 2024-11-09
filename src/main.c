@@ -389,7 +389,7 @@ int main(void)
                                                 // Output Warning message
                                                 ProgStatus = FAILED;
                                                 Led = OFF;
-                                                dprintf_("# ERROR AVH:%d(1:ON,0:OFF) failed. Retry: %d\n", AvhControl, Retry);
+                                                dprintf_("# ERROR AVH:%d(0:OFF,1:ON) failed. Retry: %d\n", AvhControl, Retry);
                                             } else {
                                                 Retry++;
                                                 for(int i = 0;i < 2;i++){
