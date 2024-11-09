@@ -406,6 +406,9 @@ int main(void)
                                 break;
                                 
                             case SUCCEEDED:
+                                dprintf_("# DEBUG SUCCEEDED Flag:%d(0:C,1:R,2:B) => AVH off.\n", ReleaseFlag);
+                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+
                                 switch(AvhControlStatus){
                                     case READY:
                                         if(VnxParam.AvhStatus == AVH_ON){
