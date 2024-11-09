@@ -379,10 +379,12 @@ int main(void)
                             case PROCESSING:
                                 switch(AvhControlStatus){
                                     case READY:
-                                        if(VnxParam.AvhStatus == AVH_HOLD && AvhControl == AVH_OFF && VnxParam.Gear != SHIFT_D && VnxParam.Brake < BRAKE_LOW){
-                                            dprintf_("# INFO AVH OFF Request Cancelled. Retry: %d\n", Retry);
-                                            print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-                                            AvhControl = AVH_ON;
+                                        if(VnxParam.AvhStatus == AVH_HOLD && AvhControl == AVH_OFF){
+                                            if(VnxParam.Gear == SHIFT_D || VnxParam.Brake < BRAKE_LOW){
+                                                dprintf_("# INFO AVH OFF Request Cancelled. Retry: %d\n", Retry);
+                                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+                                                AvhControl = AVH_ON;
+                                            }
                                         }
                                         if((VnxParam.AvhStatus & 0b01) != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
                                             if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
