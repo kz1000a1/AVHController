@@ -198,7 +198,7 @@ int main(void)
                         case AVH_HOLD:
                             if(VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0){
                                 ReleaseFlag = RELEASE; // AVH HOLD Released by Brake
-                                dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReleaseFlag:%d(0:C,1:R,2:B)\n", VnxParam.AvhStatus, ReleaseFlag);
                             }
                             if(AvhControl == AVH_ON){
                                 if(
@@ -225,13 +225,13 @@ int main(void)
                                     } else {
                                         ReleaseFlag = CLEAR; // AVH HOLD Available
                                     }
-                                    dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                    dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReleaseFlag:%d(0:C,1:R,2:B)\n", VnxParam.AvhStatus, ReleaseFlag);
                                     break;
 
                                 case BLOCK:
                                     if(VnxParam.Brake == 0.0){
                                         ReleaseFlag = CLEAR; // AVH HOLD Available
-                                        dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                        dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReleaseFlag:%d(0:C,1:R,2:B)\n", VnxParam.AvhStatus, ReleaseFlag);
                                     }
                                     break;
 
@@ -258,12 +258,12 @@ int main(void)
                                 case RELEASE:
                                     if(VnxParam.Brake == 0.0){
                                         ReleaseFlag = CLEAR; // AVH HOLD Available
-                                        dprintf_("# DEBUG AVH HOLD Released by Brake. Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                        dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReleaseFlag:%d(0:C,1:R,2:B)\n", VnxParam.AvhStatus, ReleaseFlag);
                                     }
                                     break;
                                 
                                 case BLOCK:
-                                    dprintf_("# ERROR AVH HOLD Released by Brake. AVH:%d(1:ON) Flag:%d(0:C,1:R,2:B)\n", VnxParam.AvhStatus, ReleaseFlag);
+                                    dprintf_("# ERROR AVH:%d(0:OFF,1:ON,3:HOLD) ReleaseFlag:%d(0:C,1:R,2:B)\n", VnxParam.AvhStatus, ReleaseFlag);
                                     break;
 
                                 default: // CLEAR
@@ -375,8 +375,6 @@ int main(void)
                                 break;
                             
                             case PROCESSING:
-                                dprintf_("# DEBUG PROCESSING Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
-                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                 switch(AvhControlStatus){
                                     case READY:
                                         if((VnxParam.AvhStatus & 0b01) != AvhControl){ // Transmit message for Enable or disable auto vehicle hold
@@ -409,9 +407,6 @@ int main(void)
                                 break;
                                 
                             case SUCCEEDED:
-                                dprintf_("# DEBUG SUCCEEDED Flag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
-                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-
                                 switch(AvhControlStatus){
                                     case READY:
                                         if(VnxParam.AvhStatus == AVH_ON){
