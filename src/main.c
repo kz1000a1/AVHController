@@ -121,7 +121,7 @@ void print_param(struct param* VnxParam, uint8_t AvhControl, float PrevSpeed, fl
     dprintf_("# DEBUG EyeSight(HOLD) : %d(0:OFF,1:ON)\n", VnxParam->EyeSight);
 }
 
-void led_blink(enum status Status){
+void led_blink(uint8_t Status){
     if(Status & 1){
         led_orange_on();
     } else {
@@ -206,10 +206,10 @@ int main(void)
                                    VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake
                                   ){
                                     AvhControl = AVH_OFF;
-                                    if(Status == SUCCEEDED){
-                                        Status = PROCESSING;
+                                    if(ProgStatus == SUCCEEDED){
+                                        ProgStatus = PROCESSING;
                                     }
-                                    if(Status != CANCELLED && Status != FAILED){
+                                    if(Status != CANCELLED && ProgStatus != FAILED){
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                     }
                                     print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
