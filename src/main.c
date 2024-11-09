@@ -291,7 +291,7 @@ int main(void)
                     if(VnxParam.SeatBelt == OPEN && (ProgStatus == FAILED || ProgStatus == CANCELLED)){
                         AvhControl = (VnxParam.AvhStatus & 0b01);
                         Retry = 0;
-                        ProgStatus = PROCESSING;
+                        ProgStatus = SUCCEEDED; // for Recovery AVH_ON but UNHOLD situation
                         dprintf_("# INFO AVH control restarted.\n");
                     }
                     // PreviousCanId = rx_msg_header.StdId;
