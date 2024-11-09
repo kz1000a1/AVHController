@@ -240,7 +240,7 @@ int main(void)
                                     
                             }
                             if(AvhControl == AVH_OFF){
-                                if(VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                if(ReleaseFlag == CLEAR && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                     AvhControl = AVH_ON;
                                     if(Status == SUCCEEDED){
                                         Status = PROCESSING;
@@ -331,7 +331,7 @@ int main(void)
                             if(Status != CANCELLED && Status != FAILED){
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                             }
-                            dprintf_("# INFO AVH HOLD Released. Flag:%d(0:C,1:R,2:B) => AVH off.\n", ReleaseFlag);
+                            dprintf_("# INFO AVH HOLD Released. ReleaseFlag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
                         }
                     }
 
@@ -412,7 +412,7 @@ int main(void)
                                         if(VnxParam.AvhStatus == AVH_ON){
                                             AvhControl = AVH_OFF;
                                             Status = PROCESSING;
-                                            dprintf_("# INFO AVH HOLD Failed. Flag:%d(0:C,1:R,2:B) => AVH off.\n", ReleaseFlag);
+                                            dprintf_("# ERROR AVH HOLD Failed. ReleaseFlag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
                                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                             
                                             Retry++;
