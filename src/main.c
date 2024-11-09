@@ -142,7 +142,7 @@ int main(void)
     uint8_t rx_msg_data[8] = {0};
 
     static enum avh_control_status AvhControlStatus = ENGINE_STOP;
-    static enum status Status = PROCESSING;
+    static enum prog_status ProgStatus = PROCESSING;
     static uint16_t PreviousCanId = CAN_ID_AVH_CONTROL;
     static uint8_t AvhControl = AVH_OFF;
     static uint8_t PrevAvhStatus = AVH_OFF;
@@ -317,7 +317,7 @@ int main(void)
                             dprintf_("# INFO AVH:%d(0:OFF,1:ON,3:HOLD) succeeded. Retry: %d\n", VnxParam.AvhStatus, Retry);
                             Retry = 0;
                             Status = SUCCEEDED;
-                            AvhControlStatus = READY;
+                            // AvhControlStatus = READY;
                         }
                         if(Status != CANCELLED && Status != FAILED){
                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
