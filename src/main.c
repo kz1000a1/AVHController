@@ -196,7 +196,8 @@ int main(void)
 
                     switch (VnxParam.AvhStatus){
                         case AVH_HOLD:
-                            if(VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0){
+                            // if(VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0){
+                            if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
                                 ReleaseFlag = RELEASE; // AVH HOLD Released by Brake
                                 dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReleaseFlag:%d(0:C,1:R,2:B)\n", VnxParam.AvhStatus, ReleaseFlag);
                             }
@@ -421,7 +422,7 @@ int main(void)
                                         if(VnxParam.AvhStatus == AVH_ON){
                                             AvhControl = AVH_OFF;
                                             ProgStatus = PROCESSING;
-                                            dprintf_("# INFO Restarted or HOLD Failed. ReleaseFlag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
+                                            dprintf_("# INFO AVH postprocess of restart. ReleaseFlag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
                                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                             
                                             Retry++;
