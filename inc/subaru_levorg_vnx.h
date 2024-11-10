@@ -56,9 +56,9 @@ enum avh_control_status {
 // STATUS
 enum prog_status {
     PROCESSING,
+//    SUCCEEDED,
     CANCELLED,
-    FAILED,
-    SUCCEEDED
+    FAILED
 };
 
 // AVH STATUS
@@ -79,9 +79,9 @@ enum prog_status {
 #define ON         1
 
 // AVH HOLD Released by Brake
-#define CLEAR      0
-#define RELEASE    1
-#define BLOCK      2
+// #define CLEAR      0
+// #define RELEASE    1
+// #define BLOCK      2
 
 // SHIFT
 #define SHIFT_D 1
