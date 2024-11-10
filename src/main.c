@@ -220,7 +220,7 @@ int main(void)
                             break;
 
                         case AVH_OFF:
-                            if(RepressBrake == ON)
+                            if(RepressBrake == ON){
                                 if(VnxParam.Brake == 0.0){
                                     RepressBrake = OFF; // AVH HOLD Available
                                     dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
@@ -241,7 +241,7 @@ int main(void)
                             break;
                         
                         case AVH_ON:
-                            if(RepressBrake == ON)
+                            if(RepressBrake == ON){
                                 if(VnxParam.Brake == 0.0){
                                     RepressBrake = OFF; // AVH HOLD Available
                                     dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
