@@ -316,7 +316,7 @@ int main(void)
                             if(ProgStatus != CANCELLED && ProgStatus != FAILED){
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                             }
-                            dprintf_("# INFO AVH HOLD Released. RepressBrake:%d(0:OFF,1:ON)\n", RepressBrake);
+                            dprintf_("# INFO AVH HOLD released. RepressBrake:%d(0:OFF,1:ON)\n", RepressBrake);
                         }
                     }
 
@@ -336,7 +336,7 @@ int main(void)
                             PrevBrake = 0;
                             init_param(&VnxParam);
                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                            dprintf_("# INFO ENGINE STOP.\n");
+                            dprintf_("# INFO ENGINE stop.\n");
                         }
                     } else {
                         if((rx_msg_data[2] & 0x03) != 0x0){
