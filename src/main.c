@@ -202,10 +202,7 @@ int main(void)
                                 dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                             }
                             if(AvhControl == AVH_ON){
-                                if(
-                                   // AVH HOLD only
-                                   VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake
-                                  ){
+                                if(VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake){
                                     AvhControl = AVH_OFF;
                                     if(ProgStatus != CANCELLED && ProgStatus != FAILED){
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
