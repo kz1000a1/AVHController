@@ -56,15 +56,14 @@ enum avh_control_status {
 // STATUS
 enum prog_status {
     PROCESSING,
-//    SUCCEEDED,
     CANCELLED,
     FAILED
 };
 
 // AVH STATUS
-#define AVH_OFF    0b00
+#define AVH_OFF    0b00  // bit0 AVH ON/OFF
 #define AVH_ON     0b01
-#define AVH_HOLD   0b11
+#define AVH_HOLD   0b11  // bit1 AVH HOLD/UNHOLD
 
 // AVH HOLD STATUS
 #define UNHOLD     0
@@ -77,11 +76,6 @@ enum prog_status {
 // PARKING BRAKE/DEBUG LED/EYESIGHT HOLD
 #define OFF        0
 #define ON         1
-
-// AVH HOLD Released by Brake
-// #define CLEAR      0
-// #define RELEASE    1
-// #define BLOCK      2
 
 // SHIFT
 #define SHIFT_D 1
