@@ -197,7 +197,6 @@ int main(void)
 
                     switch (VnxParam.AvhStatus){
                         case AVH_HOLD:
-                            // if(VnxParam.Gear == SHIFT_D && PrevBrake == 0.0 && VnxParam.Brake != 0.0){
                             if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
                                 RepressBrake = ON; // AVH HOLD shall be released by press brake again
                                 dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
@@ -208,9 +207,6 @@ int main(void)
                                    VnxParam.Gear != SHIFT_D && BRAKE_LOW <= VnxParam.Brake
                                   ){
                                     AvhControl = AVH_OFF;
-                                    // if(ProgStatus == SUCCEEDED){
-                                    //    ProgStatus = PROCESSING;
-                                    // }
                                     if(ProgStatus != CANCELLED && ProgStatus != FAILED){
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                     }
@@ -229,9 +225,6 @@ int main(void)
                             if(AvhControl == AVH_OFF){
                                 if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                     AvhControl = AVH_ON;
-                                    // if(ProgStatus == SUCCEEDED){
-                                    //     ProgStatus = PROCESSING;
-                                    // }
                                     if(ProgStatus != CANCELLED && ProgStatus != FAILED){
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                     }
@@ -302,8 +295,6 @@ int main(void)
                             // Output Information message
                             dprintf_("# INFO AVH:%d(0:OFF,1:ON,3:HOLD) succeeded. Retry:%d\n", VnxParam.AvhStatus, Retry);
                             Retry = 0;
-                            // ProgStatus = SUCCEEDED;
-                            // AvhControlStatus = READY;
                         }
                         if(ProgStatus != CANCELLED && ProgStatus != FAILED){
                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
@@ -311,9 +302,6 @@ int main(void)
                     } else {
                         if((PrevAvhStatus == AVH_HOLD) && (VnxParam.AvhStatus == AVH_ON)){ // AVH_HOLD => AVH_ON
                             AvhControl = AVH_OFF;
-                            // if(ProgStatus == SUCCEEDED){
-                            //     ProgStatus = PROCESSING;
-                            // }
                             if(ProgStatus != CANCELLED && ProgStatus != FAILED){
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                             }
@@ -382,7 +370,6 @@ int main(void)
                                                 if(AvhControl == AVH_ON){
                                                     dprintf_("# ERROR AVH HOLD failed. RepressBrake:%d(0:OFF,1:ON)\n", RepressBrake);
                                                     print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-                                                    // Retry = 0;
                                                     AvhControl = AVH_OFF;
                                                     led_blink((VnxParam.AvhStatus << 1) + AvhControl);                     
                                                 }
@@ -421,37 +408,6 @@ int main(void)
                                         break;
                                 }
                                 break;
-
-                            /*
-                            case SUCCEEDED:
-                                switch(AvhControlStatus){
-                                    case READY:
-                                        if(VnxParam.AvhStatus == AVH_ON){
-                                            AvhControl = AVH_OFF;
-                                            ProgStatus = PROCESSING;
-                                            dprintf_("# INFO AVH postprocess of restart. ReleaseFlag:%d(0:C,1:R,2:B)\n", ReleaseFlag);
-                                            led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                            
-                                            Retry++;
-                                            for(int i = 0;i < 2;i++){
-                                                HAL_Delay(50);
-                                                transmit_can_frame(rx_msg_data, AvhControl); // Transmit can frame for remove AVH
-                                            }
-
-                                            print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-                                            // Discard message(s) that received during HAL_delay()
-                                            while(is_can_msg_pending(CAN_RX_FIFO0)){
-                                                can_rx(&rx_msg_header, rx_msg_data);
-                                            }
-                                            // rx_msg_header.StdId = CAN_ID_SHIFT;
-                                        }
-                                        break;
-                                    
-                                    default: // ENGINE_STOP or WAIT
-                                        break;
-                                }
-                                break;
-                            */
                         }
                     }
                         
