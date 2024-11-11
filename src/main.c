@@ -247,6 +247,7 @@ int main(void)
                                     dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                                 }
                             }
+                            break;
                     }
 
                     PreviousCanId = rx_msg_header.StdId;
