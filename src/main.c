@@ -256,9 +256,11 @@ int main(void)
                 case CAN_ID_BELT:
                     VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) == 0x01);
                     if(VnxParam.SeatBelt == OPEN && (ProgStatus == FAILED || ProgStatus == CANCELLED)){
+                        dprintf_("# INFO AVH control restarted.\n");
                         switch(VnxParam.AvhStatus){
                             case AVH_ON:
                                 AvhControl = AVH_OFF;
+                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                 break;
                             
                             default: // AVH_HOLD or AVH_OFF
