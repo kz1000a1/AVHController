@@ -265,7 +265,6 @@ int main(void)
                                 AvhControl = (VnxParam.AvhStatus & 0b01);
                                 break;
                         }
-                        Retry = 0;
                         ProgStatus = PROCESSING;
                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                         dprintf_("# INFO AVH control restarted.\n");
@@ -328,6 +327,7 @@ int main(void)
                         if((rx_msg_data[2] & 0x03) != 0x0){
                             if(ProgStatus != CANCELLED){
                                 ProgStatus = CANCELLED;
+                                Retry = 0;
                                 Led = OFF;
                                 dprintf_("# INFO AVH control cancelled.\n");
                             }
@@ -381,6 +381,7 @@ int main(void)
                                             if(MAX_RETRY <= Retry){ // Previous enable or disable auto vehicle hold message failed
                                                 // Output Warning message
                                                 ProgStatus = FAILED;
+                                                Retry = 0;
                                                 Led = OFF;
                                                 dprintf_("# ERROR AVH:%d(0:OFF,1:ON) failed. Retry:%d\n", AvhControl, Retry);
                                             } else {
