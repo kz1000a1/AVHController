@@ -289,8 +289,8 @@ int main(void)
                     PrevAvhStatus = VnxParam.AvhStatus;
                     VnxParam.AvhStatus = ((rx_msg_data[5] & 0x20) == 0x20) + (((rx_msg_data[5] & 0x22) == 0x22) << 1);
 
-                    if((PrevAvhStatus & 0b1) != (VnxParam.AvhStatus & 0b01)){ // AVH_OFF <=> AVH_ON/AVH_HOLD
-                        if(Retry != 0 && ProgStatus == PROCESSING && AvhControl == (VnxParam.AvhStatus & 0b1)){
+                    if((PrevAvhStatus & 0b01) != (VnxParam.AvhStatus & 0b01)){ // AVH_OFF <=> AVH_ON/AVH_HOLD
+                        if(Retry != 0 && ProgStatus == PROCESSING && AvhControl == (VnxParam.AvhStatus & 0b01)){
                             // Output Information message
                             dprintf_("# INFO AVH:%d(0:OFF,1:ON,3:HOLD) succeeded. Retry:%d\n", VnxParam.AvhStatus, Retry);
                             Retry = 0;
