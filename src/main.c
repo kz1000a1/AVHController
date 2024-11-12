@@ -257,7 +257,7 @@ int main(void)
                 case CAN_ID_BELT:
                     PrevSeatBelt = VnxParam.SeatBelt;
                     VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) == 0x01);
-                    if(PrevSeatBelt = OPEN && VnxParam.SeatBelt == CLOSE && (ProgStatus == FAILED || ProgStatus == CANCELLED)){
+                    if(PrevSeatBelt == OPEN && VnxParam.SeatBelt == CLOSE && (ProgStatus == FAILED || ProgStatus == CANCELLED)){
                         dprintf_("# INFO AVH control restarted.\n");
                         switch(VnxParam.AvhStatus){
                             case AVH_ON:
