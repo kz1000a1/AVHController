@@ -150,6 +150,7 @@ int main(void)
     static uint8_t Retry = 0;
     static uint8_t Led = OFF;
     static uint8_t RepressBrake = OFF;
+    static uint8_t PrevSeatBelt = OPEN;
     static float PrevSpeed = 0;
     static float PrevBrake = 0;
     static float MaxBrake = 0;
@@ -254,8 +255,9 @@ int main(void)
                     break;
 
                 case CAN_ID_BELT:
+                    PrevSeatBelt = VnxParam.SeatBelt;
                     VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) == 0x01);
-                    if(VnxParam.SeatBelt == OPEN && (ProgStatus == FAILED || ProgStatus == CANCELLED)){
+                    if(PrevSeatBelt = OPEN && VnxParam.SeatBelt == CLOSE && (ProgStatus == FAILED || ProgStatus == CANCELLED)){
                         dprintf_("# INFO AVH control restarted.\n");
                         switch(VnxParam.AvhStatus){
                             case AVH_ON:
