@@ -269,7 +269,6 @@ int main(void)
                         }
                         ProgStatus = PROCESSING;
                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                        dprintf_("# INFO AVH control restarted.\n");
                     }
                     // PreviousCanId = rx_msg_header.StdId;
                     break;
