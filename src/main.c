@@ -320,6 +320,7 @@ int main(void)
                             PrevAvhStatus = AVH_OFF;
                             Retry = 0;
                             RepressBrake = OFF;
+                            PrevSeatBelt = OPEN;
                             PrevSpeed = 0;
                             PrevBrake = 0;
                             init_param(&VnxParam);
