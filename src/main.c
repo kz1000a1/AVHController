@@ -392,7 +392,7 @@ int main(void)
                                     
                                     case ENGINE_STOP:
                                         dprintf_("# INFO ENGINE start.\n");
-                                    case WAIT:
+                                    case PAUSE:
                                         AvhControlStatus = READY;
                                         break;
                                 }
