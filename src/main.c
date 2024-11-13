@@ -355,7 +355,7 @@ int main(void)
                                             case AVH_ON:
                                                 if(AvhControl == AVH_ON){
                                                     dprintf_("# ERROR AVH HOLD failed. RepressBrake:%d(0:OFF,1:ON)=>1\n", RepressBrake);
-                                                    RepressBrake = ON; // AVH HOLD shall be released by press brake again
+                                                    RepressBrake = ON; // Maybe brake was pressed again during engine stop
                                                     print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                                     AvhControl = AVH_OFF;
                                                     led_blink((VnxParam.AvhStatus << 1) + AvhControl);                     
