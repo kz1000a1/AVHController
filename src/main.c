@@ -345,9 +345,9 @@ int main(void)
                                                 if(AvhControl == AVH_OFF){
                                                     if(VnxParam.Brake < BRAKE_LOW){
                                                         dprintf_("# INFO AVH OFF request cancelled. Retry:%d\n", Retry);
-                                                        print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                                         Retry = 0;
                                                         AvhControl = AVH_ON;
+                                                        print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                                     }
                                                 }
@@ -357,8 +357,8 @@ int main(void)
                                                 if(AvhControl == AVH_ON){
                                                     dprintf_("# ERROR AVH HOLD failed. RepressBrake:%d(0:OFF,1:ON)=>1\n", RepressBrake);
                                                     RepressBrake = ON; // Maybe brake was pressed again during engine stop
-                                                    print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                                     AvhControl = AVH_OFF;
+                                                    print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                                     led_blink((VnxParam.AvhStatus << 1) + AvhControl);                     
                                                 }
                                                 break;
