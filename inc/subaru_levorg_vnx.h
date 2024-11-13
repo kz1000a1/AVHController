@@ -49,7 +49,7 @@ struct param{
 // AVH CONTROL STATUS
 enum avh_control_status {
     ENGINE_STOP,
-    WAIT,
+    PAUSE,
     READY
 };
 
