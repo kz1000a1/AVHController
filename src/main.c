@@ -198,9 +198,11 @@ int main(void)
 
                     switch (VnxParam.AvhStatus){
                         case AVH_HOLD:
-                            if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
-                                RepressBrake = ON; // AVH HOLD shall be released by press brake again
-                                dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
+                            if(RepressBrake == OFF){
+                                if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
+                                    RepressBrake = ON; // AVH HOLD shall be released by press brake again
+                                    dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
+                                }
                             }
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_ON){
