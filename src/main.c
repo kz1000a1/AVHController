@@ -183,6 +183,16 @@ int main(void)
             }
 
             switch (rx_msg_header.StdId){
+                case CAN_ID_ACCEL:
+                    VnxParam.Accel = rx_msg_data[4] / 2.55;
+                    PreviousCanId = rx_msg_header.StdId;
+                    break;
+
+                case CAN_ID_SHIFT:
+                    VnxParam.Gear = (rx_msg_data[3] & 0x07);
+                    PreviousCanId = rx_msg_header.StdId;
+                    break;
+
                 case CAN_ID_SPEED:
                     PrevSpeed = VnxParam.Speed;
                     PrevBrake = VnxParam.Brake;
@@ -247,42 +257,6 @@ int main(void)
                     PreviousCanId = rx_msg_header.StdId;
                     break;
 
-                case CAN_ID_SHIFT:
-                    VnxParam.Gear = (rx_msg_data[3] & 0x07);
-                    PreviousCanId = rx_msg_header.StdId;
-                    break;
-
-                case CAN_ID_ACCEL:
-                    VnxParam.Accel = rx_msg_data[4] / 2.55;
-                    PreviousCanId = rx_msg_header.StdId;
-                    break;
-
-                case CAN_ID_BELT:
-                    PrevSeatBelt = VnxParam.SeatBelt;
-                    VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) == 0x01);
-                    if(PrevSeatBelt == OPEN && VnxParam.SeatBelt == CLOSE && (ProgStatus == FAILED || ProgStatus == CANCELLED)){
-                        dprintf_("# INFO AVH control restarted.\n");
-                        switch(VnxParam.AvhStatus){
-                            case AVH_ON:
-                                AvhControl = AVH_OFF;
-                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-                                break;
-                            
-                            default: // AVH_HOLD or AVH_OFF
-                                AvhControl = (VnxParam.AvhStatus & 0b01);
-                                break;
-                        }
-                        ProgStatus = PROCESSING;
-                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                    }
-                    // PreviousCanId = rx_msg_header.StdId;
-                    break;
-
-                case CAN_ID_DOOR:
-                    VnxParam.Door = ((rx_msg_data[4] & 0x01) == 0x01);
-                    // PreviousCanId = rx_msg_header.StdId;
-                    break;
-
                 case CAN_ID_EYESIGHT:
                     VnxParam.EyeSight = ((rx_msg_data[7] & 0x10) == 0x10);
                     PreviousCanId = rx_msg_header.StdId;
@@ -309,6 +283,32 @@ int main(void)
                         }
                     }
 
+                    // PreviousCanId = rx_msg_header.StdId;
+                    break;
+
+                case CAN_ID_BELT:
+                    PrevSeatBelt = VnxParam.SeatBelt;
+                    VnxParam.SeatBelt = ((rx_msg_data[6] & 0x01) == 0x01);
+                    if(PrevSeatBelt == OPEN && VnxParam.SeatBelt == CLOSE && (ProgStatus == FAILED || ProgStatus == CANCELLED)){
+                        dprintf_("# INFO AVH control restarted.\n");
+                        switch(VnxParam.AvhStatus){
+                            case AVH_ON:
+                                AvhControl = AVH_OFF;
+                                print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
+                                break;
+                            
+                            default: // AVH_HOLD or AVH_OFF
+                                AvhControl = (VnxParam.AvhStatus & 0b01);
+                                break;
+                        }
+                        ProgStatus = PROCESSING;
+                        led_blink((VnxParam.AvhStatus << 1) + AvhControl);
+                    }
+                    // PreviousCanId = rx_msg_header.StdId;
+                    break;
+
+                case CAN_ID_DOOR:
+                    VnxParam.Door = ((rx_msg_data[4] & 0x01) == 0x01);
                     // PreviousCanId = rx_msg_header.StdId;
                     break;
 
