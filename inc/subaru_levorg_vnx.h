@@ -19,14 +19,14 @@
 // DebugMode==DEBUG?printf_(fmt, ##__VA_ARGS__):no_printf_(fmt, ##__VA_ARGS__)
 
 // Receive Only Two CAN Ids
-#define CAN_ID_AVH_CONTROL 0x6BB
-#define CAN_ID_AVH_STATUS  0x32B
+#define CAN_ID_ACCEL       0x040
 #define CAN_ID_SHIFT       0x048
 #define CAN_ID_SPEED       0x139
-#define CAN_ID_ACCEL       0x040
+#define CAN_ID_EYESIGHT    0x321
+#define CAN_ID_AVH_STATUS  0x32B
 #define CAN_ID_BELT        0x390
 #define CAN_ID_DOOR        0x3AC
-#define CAN_ID_EYESIGHT    0x321
+#define CAN_ID_AVH_CONTROL 0x6BB
 
 struct param{
     uint8_t AvhStatus;
