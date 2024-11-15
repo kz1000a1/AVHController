@@ -217,7 +217,7 @@ int main(void)
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_ON){
                                     // If shift is 'P', AVH HOLD shall be released automatically
-                                    if((VnxParam.Gear == SHIFT_N || VnxParam.Gear == SHIFT_R) && BRAKE_LOW <= VnxParam.Brake){
+                                    if((VnxParam.Gear == SHIFT_N || (VnxParam.Gear == SHIFT_R && RepressBrake == OFF)) && BRAKE_LOW <= VnxParam.Brake){
                                         AvhControl = AVH_OFF;
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                         print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
