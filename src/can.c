@@ -37,17 +37,21 @@ void can_init(void)
 
 
     // Initialize default CAN filter configuration
-    filter.FilterIdHigh = CAN_ID_AVH_CONTROL << 5;
-    filter.FilterIdLow = CAN_ID_SHIFT << 5;
+    // filter.FilterIdHigh = CAN_ID_AVH_CONTROL << 5;
+    // filter.FilterIdLow = CAN_ID_SHIFT << 5;
+    filter.FilterIdHigh = CAN_ID_BELT << 5;
+    filter.FilterIdLow = CAN_ID_ACCEL << 5;
 
     // if(DebugMode == CANDUMP)
     // {
     //     filter.FilterMaskIdHigh = 0x8;
     // } else {
-        filter.FilterMaskIdHigh = ((~(CAN_ID_AVH_CONTROL ^ CAN_ID_AVH_STATUS)) << 5) | 0x8;
+        // filter.FilterMaskIdHigh = ((~(CAN_ID_AVH_CONTROL ^ CAN_ID_AVH_STATUS)) << 5) | 0x8;
+        filter.FilterMaskIdHigh = (0x7c3 << 5) | 0x8;
     // }
 
-    filter.FilterMaskIdLow = ((~((CAN_ID_SHIFT ^ CAN_ID_SPEED) | (CAN_ID_SHIFT ^ CAN_ID_ACCEL) | (CAN_ID_SHIFT ^ CAN_ID_BELT) | (CAN_ID_SHIFT ^ CAN_ID_DOOR) | (CAN_ID_SPEED ^ CAN_ID_ACCEL) | (CAN_ID_SPEED ^ CAN_ID_BELT) | (CAN_ID_SPEED ^ CAN_ID_DOOR) | (CAN_ID_ACCEL ^ CAN_ID_BELT) | (CAN_ID_ACCEL ^ CAN_ID_DOOR) | (CAN_ID_BELT ^ CAN_ID_DOOR))) << 5) | 0x8;
+    // filter.FilterMaskIdLow = ((~((CAN_ID_SHIFT ^ CAN_ID_SPEED) | (CAN_ID_SHIFT ^ CAN_ID_ACCEL) | (CAN_ID_SHIFT ^ CAN_ID_BELT) | (CAN_ID_SHIFT ^ CAN_ID_DOOR) | (CAN_ID_SPEED ^ CAN_ID_ACCEL) | (CAN_ID_SPEED ^ CAN_ID_BELT) | (CAN_ID_SPEED ^ CAN_ID_DOOR) | (CAN_ID_ACCEL ^ CAN_ID_BELT) | (CAN_ID_ACCEL ^ CAN_ID_DOOR) | (CAN_ID_BELT ^ CAN_ID_DOOR))) << 5) | 0x8;
+    filter.FilterMaskIdLow = (0x004 << 5) | 0x8;
     filter.FilterFIFOAssignment = CAN_RX_FIFO0;
     filter.FilterBank = 0;
     filter.FilterMode = CAN_FILTERMODE_IDMASK;
