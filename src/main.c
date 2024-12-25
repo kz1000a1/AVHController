@@ -206,6 +206,15 @@ int main(void)
                     }
                     VnxParam.ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
 
+                    if(VnxParam.EyeSight == HOLD){
+                       if(RepressBrake == OFF){
+                            if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
+                                RepressBrake = ON; // EyeSight HOLD shall be released by press
+                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight, RepressBrake);
+                            }
+                        }
+                    }
+
                     switch (VnxParam.AvhStatus){
                         case AVH_HOLD:
                             if(RepressBrake == OFF){
