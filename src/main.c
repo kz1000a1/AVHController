@@ -111,6 +111,7 @@ void init_param(struct param* VnxParam){
 }
 
 void print_param(struct param* VnxParam, uint8_t AvhControl, float PrevSpeed, float PrevBrake, float MaxBrake){
+#if 0
     dprintf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam->Speed, (int)(VnxParam->Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
     dprintf_("# DEBUG Accel:%d.%02d%%\n", (int)VnxParam->Accel, (int)(VnxParam->Accel * 100) % 100);
     dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% / MAX: %d.%02d%%\n", (int)VnxParam->Brake, (int)(VnxParam->Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)MaxBrake, (int)(MaxBrake * 100) % 100);
@@ -120,6 +121,7 @@ void print_param(struct param* VnxParam, uint8_t AvhControl, float PrevSpeed, fl
     dprintf_("# DEBUG Door:%d(0:CLOSE,1:OPEN)\n", VnxParam->Door);
     dprintf_("# DEBUG Belt:%d(0:CLOSE,1:OPEN)\n", VnxParam->SeatBelt);
     dprintf_("# DEBUG EyeSight(HOLD):%d(0:OFF,1:ON)\n", VnxParam->EyeSight);
+#endif
 }
 
 void led_blink(uint8_t Status){
