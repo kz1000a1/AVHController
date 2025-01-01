@@ -207,7 +207,13 @@ int main(void)
                         MaxBrake = VnxParam.Brake;
                     }
                     VnxParam.ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
-
+                    
+#ifdef DEBUG_MODE
+                    if((PrevSpeed == 0.0 && VnxParam.Speed != 0.0) || (PrevSpeed != 0.0 && VnxParam.Speed == 0.0)){
+                       printf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam->Speed, (int)(VnxParam->Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                    }
+#endif
+                    
                     if(VnxParam.EyeSight == HOLD){
                        if(RepressBrake == OFF){
                             if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
