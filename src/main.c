@@ -210,7 +210,7 @@ int main(void)
                     
 #ifdef DEBUG_MODE
                     if((PrevSpeed == 0.0 && VnxParam.Speed != 0.0) || (PrevSpeed != 0.0 && VnxParam.Speed == 0.0)){
-                       printf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam->Speed, (int)(VnxParam->Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                       printf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                     }
 #endif
                     
