@@ -103,7 +103,8 @@ void init_param(struct param* VnxParam){
     VnxParam->ParkBrake = ON;
     VnxParam->SeatBelt = OPEN;
     VnxParam->Door = OPEN;
-    VnxParam->EyeSight = HOLD;
+    VnxParam->EyeSightReady = ON;
+    VnxParam->EyeSightHold = ON;
     VnxParam->Gear = SHIFT_P;
     VnxParam->Speed = 0;
     VnxParam->Brake = 0;
@@ -120,7 +121,7 @@ void print_param(struct param* VnxParam, uint8_t AvhControl, float PrevSpeed, fl
     dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD)=>%d\n", VnxParam->AvhStatus, AvhControl);
     dprintf_("# DEBUG Door:%d(0:CLOSE,1:OPEN)\n", VnxParam->Door);
     dprintf_("# DEBUG Belt:%d(0:CLOSE,1:OPEN)\n", VnxParam->SeatBelt);
-    dprintf_("# DEBUG EyeSight(HOLD):%d(0:OFF,1:ON)\n", VnxParam->EyeSight);
+    dprintf_("# DEBUG EyeSight(HOLD):%d(0:OFF,1:ON)\n", VnxParam->EyeSightHold);
 #endif
 }
 
@@ -217,11 +218,11 @@ int main(void)
                     }
 #endif
                     
-                    if(VnxParam.EyeSight == HOLD){
+                    if(VnxParam.EyeSightHold == HOLD){
                        if(RepressBrake == OFF){
                             if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
                                 RepressBrake = ON; // EyeSight HOLD shall be released by press
-                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight, RepressBrake);
+                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSightHold, RepressBrake);
                             }
                         }
                     }
@@ -255,7 +256,7 @@ int main(void)
                             }
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_OFF){
-                                    if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                    if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSightHold == UNHOLD && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                         AvhControl = AVH_ON;
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                         print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
@@ -278,7 +279,8 @@ int main(void)
                     break;
 
                 case CAN_ID_EYESIGHT:
-                    VnxParam.EyeSight = ((rx_msg_data[7] & 0x30) != 0);
+                    VnxParam.EyeSightReady = ((rx_msg_data[7] & 0x20) == 0x20);
+                    VnxParam.EyeSightHold = ((rx_msg_data[7] & 0x10) == 0x10);
 
                     PreviousCanId = rx_msg_header.StdId;
 #ifdef DEBUG_MODE
