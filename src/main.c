@@ -275,11 +275,8 @@ int main(void)
                     break;
 
                 case CAN_ID_EYESIGHT:
-                    if(rx_msg_data[7] & 0x30){
-                        VnxParam.EyeSight = HOLD;
-                    } else {
-                        VnxParam.EyeSight = UNHOLD;
-                    }                   
+                    VnxParam.EyeSight = ((rx_msg_data[7] & 0x30) != 0);
+
                     PreviousCanId = rx_msg_header.StdId;
 #ifdef DEBUG_MODE
                     print_rx_frame(&rx_msg_header, rx_msg_data);
