@@ -104,7 +104,7 @@ void init_param(struct param* VnxParam){
     VnxParam->SeatBelt = OPEN;
     VnxParam->Door = OPEN;
     VnxParam->EyeSightReady = ON;
-    VnxParam->EyeSightHold = ON;
+    VnxParam->EyeSightHold = HOLD;
     VnxParam->Gear = SHIFT_P;
     VnxParam->Speed = 0;
     VnxParam->Brake = 0;
