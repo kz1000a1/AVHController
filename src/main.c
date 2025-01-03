@@ -212,6 +212,9 @@ int main(void)
                     if((PrevSpeed == 0.0 && VnxParam.Speed != 0.0) || (PrevSpeed != 0.0 && VnxParam.Speed == 0.0)){
                        printf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                     }
+                    if((PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake) || (PrevBrake == 0.0 && VnxParam.Brake != 0.0) || (PrevBrake != 0.0 && VnxParam.Brake == 0.0)){
+                       dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%%\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
+                    }
 #endif
                     
                     if(VnxParam.EyeSight == HOLD){
