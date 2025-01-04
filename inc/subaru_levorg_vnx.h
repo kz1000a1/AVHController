@@ -33,6 +33,7 @@ struct param{
     uint8_t ParkBrake;
     uint8_t SeatBelt;
     uint8_t Door;
+    uint8_t EyeSight;
     uint8_t EyeSightReady;
     uint8_t EyeSightHold;
     uint8_t Gear;
