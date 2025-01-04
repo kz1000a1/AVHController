@@ -103,8 +103,9 @@ void init_param(struct param* VnxParam){
     VnxParam->ParkBrake = ON;
     VnxParam->SeatBelt = OPEN;
     VnxParam->Door = OPEN;
-    VnxParam->EyeSightReady = ON;
-    VnxParam->EyeSightHold = HOLD;
+    VnxParam->EyeSight = HOLD;
+//    VnxParam->EyeSightReady = ON;
+//    VnxParam->EyeSightHold = HOLD;
     VnxParam->Gear = SHIFT_P;
     VnxParam->Speed = 0;
     VnxParam->Brake = 0;
@@ -211,18 +212,18 @@ int main(void)
                     
 #ifdef DEBUG_MODE
                     if((PrevSpeed == 0.0 && VnxParam.Speed != 0.0) || (PrevSpeed != 0.0 && VnxParam.Speed == 0.0)){
-                       printf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                        printf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                     }
-                    if((PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake) || (PrevBrake == 0.0 && VnxParam.Brake != 0.0) || (PrevBrake != 0.0 && VnxParam.Brake == 0.0)){
-                       printf_("# DEBUG Brake:%d.%02d(%d.%02d)%%\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
-                    }
+                    // if((PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake) || (PrevBrake == 0.0 && VnxParam.Brake != 0.0) || (PrevBrake != 0.0 && VnxParam.Brake == 0.0)){
+                        printf_("# DEBUG Brake:%d.%02d(%d.%02d)%%\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
+                    // }
 #endif
                     
-                    if(VnxParam.EyeSightHold == HOLD){
-                       if(RepressBrake == OFF){
-                            if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
+                    if(VnxParam.Brake != 0.0){
+                        if(VnxParam.EyeSight == HOLD){
+                            if(RepressBrake == OFF){
                                 RepressBrake = ON; // EyeSight HOLD shall be released by press
-                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSightHold, RepressBrake);
+                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) RepressBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight, RepressBrake);
                             }
                         }
                     }
@@ -279,8 +280,9 @@ int main(void)
                     break;
 
                 case CAN_ID_EYESIGHT:
-                    VnxParam.EyeSightReady = ((rx_msg_data[7] & 0x20) == 0x20);
-                    VnxParam.EyeSightHold = ((rx_msg_data[7] & 0x10) == 0x10);
+                    VnxParam.EyeSight = ((rx_msg_data[7] & 0x10) == 0x10);
+                    // VnxParam.EyeSightReady = ((rx_msg_data[7] & 0x20) == 0x20);
+                    // VnxParam.EyeSightHold = ((rx_msg_data[7] & 0x10) == 0x10);
 
                     PreviousCanId = rx_msg_header.StdId;
 #ifdef DEBUG_MODE
