@@ -220,30 +220,26 @@ int main(void)
                     
                     if(VnxParam.Brake == 0.0){
                         if(AccHoldDurBrake == ON){
-                            AccHoldDurBrake = OFF; // EyeSight HOLD shall be released by press
+                            AccHoldDurBrake = OFF;
                             dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight, AccHoldDurBrake);
-                        }
-                        if(RepressBrake == ON){
-                            RepressBrake = OFF; // AVH HOLD shall be released by press brake again
-                            dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                         }
                     } else {
                         if(VnxParam.EyeSight == HOLD){
                             if(AccHoldDurBrake == OFF){
-                                AccHoldDurBrake = ON; // EyeSight HOLD shall be released by press
+                                AccHoldDurBrake = ON;
                                 dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight, AccHoldDurBrake);
-                            }
-                        }
-                        if(VnxParam.AvhStatus == AVH_HOLD){
-                            if(RepressBrake == OFF){
-                                RepressBrake = ON; // AVH HOLD shall be released by press brake again
-                                dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                             }
                         }
                     }
 
                     switch (VnxParam.AvhStatus){
                         case AVH_HOLD:
+                            if(RepressBrake == OFF){
+                                if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
+                                    RepressBrake = ON; // AVH HOLD shall be released by press brake again
+                                    dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
+                                }
+                            }
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_ON){
                                     // If shift is 'P', AVH HOLD shall be released automatically
@@ -257,6 +253,12 @@ int main(void)
                             break;
 
                         case AVH_OFF:
+                            if(RepressBrake == ON){
+                                if(VnxParam.Brake == 0.0){
+                                    RepressBrake = OFF; // AVH HOLD Available
+                                    dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
+                                }
+                            }
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_OFF){
                                     if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && AccHoldDurBrake == OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
@@ -268,7 +270,13 @@ int main(void)
                             }
                             break;
                         
-                        default: // AVH_ON
+                        case AVH_ON:
+                            if(RepressBrake == ON){
+                                if(VnxParam.Brake == 0.0){
+                                    RepressBrake = OFF; // AVH HOLD Available
+                                    dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
+                                }
+                            }
                             break;
                             
                     }
