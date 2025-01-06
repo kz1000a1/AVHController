@@ -151,7 +151,7 @@ int main(void)
     static uint8_t PrevAvhStatus = AVH_OFF;
     static uint8_t Retry = 0;
     static uint8_t Led = OFF;
-    static uint8_t AvhHoldDurBrake = OFF;
+    static uint8_t RepressBrake = OFF;
     static uint8_t AccHoldDurBrake = OFF;
     static uint8_t PrevSeatBelt = OPEN;
     static float PrevSpeed = 0;
@@ -223,9 +223,9 @@ int main(void)
                             AccHoldDurBrake = OFF; // EyeSight HOLD shall be released by press
                             dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight, AccHoldDurBrake);
                         }
-                        if(AvhHoldDurBrake == ON){
-                            AvhHoldDurBrake = OFF; // AVH HOLD shall be released by press brake again
-                            dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) AvhDurB:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, AvhHoldDurBrake);
+                        if(RepressBrake == ON){
+                            RepressBrake = OFF; // AVH HOLD shall be released by press brake again
+                            dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                         }
                     } else {
                         if(VnxParam.EyeSight == HOLD){
@@ -235,9 +235,9 @@ int main(void)
                             }
                         }
                         if(VnxParam.AvhStatus == AVH_HOLD){
-                            if(AvhHoldDurBrake == OFF){
-                                AvhHoldDurBrake = ON; // AVH HOLD shall be released by press brake again
-                                dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) AvhDurB:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, AvhHoldDurBrake);
+                            if(RepressBrake == OFF){
+                                RepressBrake = ON; // AVH HOLD shall be released by press brake again
+                                dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                             }
                         }
                     }
@@ -247,7 +247,7 @@ int main(void)
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_ON){
                                     // If shift is 'P', AVH HOLD shall be released automatically
-                                    if((VnxParam.Gear == SHIFT_N || (VnxParam.Gear == SHIFT_R && AvhHoldDurBrake == OFF)) && BRAKE_LOW <= VnxParam.Brake){
+                                    if((VnxParam.Gear == SHIFT_N || (VnxParam.Gear == SHIFT_R && RepressBrake == OFF)) && BRAKE_LOW <= VnxParam.Brake){
                                         AvhControl = AVH_OFF;
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                         print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
@@ -259,7 +259,7 @@ int main(void)
                         case AVH_OFF:
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_OFF){
-                                    if(AvhHoldDurBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && AccHoldDurBrake == OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                    if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && AccHoldDurBrake == OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                         AvhControl = AVH_ON;
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                         print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
@@ -303,7 +303,7 @@ int main(void)
                             if((PrevAvhStatus == AVH_HOLD) && (VnxParam.AvhStatus == AVH_ON)){ // AVH_HOLD => AVH_ON
                                 AvhControl = AVH_OFF;
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                dprintf_("# INFO AVH HOLD released. AvhDurB:%d AccDurB:%d\n", AvhHoldDurBrake, AccHoldDurBrake);
+                                dprintf_("# INFO AVH HOLD released. ReBrake:%d AccDurB:%d\n", RepressBrake, AccHoldDurBrake);
                             }
                         }
                     }
@@ -345,7 +345,7 @@ int main(void)
                             AvhControl = AVH_OFF;
                             PrevAvhStatus = AVH_OFF;
                             Retry = 0;
-                            AvhHoldDurBrake = OFF;
+                            RepressBrake = OFF;
                             AccHoldDurBrake = OFF;
                             PrevSeatBelt = OPEN;
                             PrevSpeed = 0;
@@ -383,12 +383,12 @@ int main(void)
                                             
                                             case AVH_ON:
                                                 if(AvhControl == AVH_ON){
-                                                    dprintf_("# ERROR AVH HOLD failed. AvhDurB:%d=>1 AccDurB:%d=>1\n", AvhHoldDurBrake, AccHoldDurBrake);
-                                                    AvhHoldDurBrake = ON; // Maybe brake was pressed again during engine stop
+                                                    dprintf_("# ERROR AVH HOLD failed. ReBrake:%d=>1 AccDurB:%d=>1\n", RepressBrake, AccHoldDurBrake);
+                                                    RepressBrake = ON; // Maybe brake was pressed again during engine stop
                                                     AccHoldDurBrake = ON;
                                                     AvhControl = AVH_OFF;
                                                     print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
-                                                    led_blink((VnxParam.AvhStatus << 1) + AvhControl);                     
+                                                    led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                                 }
                                                 break;
                                             
