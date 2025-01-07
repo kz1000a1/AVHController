@@ -113,7 +113,7 @@ void init_param(param* VnxParam){
     VnxParam->Accel = 0;
 }
 
-void print_param(struct param* VnxParam, uint8_t AvhControl, float PrevSpeed, float PrevBrake, float MaxBrake){
+void print_param(param* VnxParam, uint8_t AvhControl, float PrevSpeed, float PrevBrake, float MaxBrake){
 #if 0
     dprintf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam->Speed, (int)(VnxParam->Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
     dprintf_("# DEBUG Accel:%d.%02d%%\n", (int)VnxParam->Accel, (int)(VnxParam->Accel * 100) % 100);
