@@ -98,12 +98,15 @@ void transmit_can_frame(uint8_t* rx_msg_data, uint8_t avh){
 #endif
 }
 
-void init_param(struct param* VnxParam){
+void init_param(param* VnxParam){
     VnxParam->AvhStatus = AVH_OFF;
     VnxParam->ParkBrake = ON;
     VnxParam->SeatBelt = OPEN;
     VnxParam->Door = OPEN;
-    VnxParam->EyeSight = HOLD;
+    VnxParam->EyeSight.Switch = OFF;
+    VnxParam->EyeSight.Acc = OFF;
+    VnxParam->EyeSight.Ready = OFF;
+    VnxParam->EyeSight.Hold = UNHOLD;
     VnxParam->Gear = SHIFT_P;
     VnxParam->Speed = 0;
     VnxParam->Brake = 0;
@@ -157,7 +160,7 @@ int main(void)
     static float PrevSpeed = 0;
     static float PrevBrake = 0;
     static float MaxBrake = 0;
-    static struct param VnxParam;
+    static param VnxParam;
 
     init_param(&VnxParam);
 
@@ -221,13 +224,13 @@ int main(void)
                     if(VnxParam.Brake == 0.0){
                         if(AccHoldDurBrake == ON){
                             AccHoldDurBrake = OFF;
-                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight, AccHoldDurBrake);
+                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, AccHoldDurBrake);
                         }
                     } else {
-                        if(VnxParam.EyeSight == HOLD){
+                        if(VnxParam.EyeSight.Hold == HOLD){
                             if(AccHoldDurBrake == OFF){
                                 AccHoldDurBrake = ON;
-                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight, AccHoldDurBrake);
+                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, AccHoldDurBrake);
                             }
                         }
                     }
@@ -285,9 +288,10 @@ int main(void)
                     break;
 
                 case CAN_ID_EYESIGHT:
-                    VnxParam.EyeSight = ((rx_msg_data[7] & 0x10) == 0x10);
-                    // VnxParam.EyeSightReady = ((rx_msg_data[7] & 0x20) == 0x20);
-                    // VnxParam.EyeSightHold = ((rx_msg_data[7] & 0x10) == 0x10);
+                    VnxParam.EyeSight.Switch = ((rx_msg_data[6] & 0x20) == 0x20);
+                    VnxParam.EyeSight.Acc = ((rx_msg_data[6] & 0x10) == 0x10);
+                    VnxParam.EyeSight.Ready = ((rx_msg_data[7] & 0x20) == 0x20);
+                    VnxParam.EyeSight.Hold = ((rx_msg_data[7] & 0x10) == 0x10);
 
                     PreviousCanId = rx_msg_header.StdId;
 #ifdef DEBUG_MODE
