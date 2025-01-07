@@ -296,6 +296,7 @@ int main(void)
                     PreviousCanId = rx_msg_header.StdId;
 #ifdef DEBUG_MODE
                     print_rx_frame(&rx_msg_header, rx_msg_data);
+                    printf_("Switch:%ｄ Acc:%ｄ Ready:%ｄ Hold:%ｄ\n", VnxParam.EyeSight.Switch, VnxParam.EyeSight.Acc, VnxParam.EyeSight.Ready, VnxParam.EyeSight.Hold);
 #endif
                     break;
 
