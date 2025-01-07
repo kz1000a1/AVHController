@@ -103,10 +103,10 @@ void init_param(param* VnxParam){
     VnxParam->ParkBrake = ON;
     VnxParam->SeatBelt = OPEN;
     VnxParam->Door = OPEN;
-    VnxParam->EyeSight.Switch = OFF;
-    VnxParam->EyeSight.Acc = OFF;
-    VnxParam->EyeSight.Ready = OFF;
-    VnxParam->EyeSight.Hold = UNHOLD;
+    VnxParam->EyeSight->Switch = OFF;
+    VnxParam->EyeSight->Acc = OFF;
+    VnxParam->EyeSight->Ready = OFF;
+    VnxParam->EyeSight->Hold = UNHOLD;
     VnxParam->Gear = SHIFT_P;
     VnxParam->Speed = 0;
     VnxParam->Brake = 0;
