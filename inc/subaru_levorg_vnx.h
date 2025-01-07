@@ -29,6 +29,13 @@
 #define CAN_ID_AVH_CONTROL 0x6BB
 
 typedef struct{
+    uint8_t Switch;
+    uint8_t Acc;
+    uint8_t Ready;
+    uint8_t Hold;
+} eyesight;
+
+typedef struct{
     uint8_t AvhStatus;
     uint8_t ParkBrake;
     uint8_t SeatBelt;
@@ -39,13 +46,6 @@ typedef struct{
     float Brake;
     float Accel;
 } param;
-
-typedef struct{
-    uint8_t Switch;
-    uint8_t Acc;
-    uint8_t Ready;
-    uint8_t Hold;
-} eyesight;
 
 // Brake Pressure to Enable AVH
 #define BRAKE_HIGH 60
