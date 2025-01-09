@@ -223,15 +223,15 @@ int main(void)
 #endif
                     
                     if(VnxParam.Brake == 0.0){
-                        if(AccHoldDurBrake == ON){
-                            AccHoldDurBrake = OFF;
-                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, AccHoldDurBrake);
+                        if(OffByBrake == ON){
+                            OffByBrake = OFF;
+                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
                         }
                     } else {
                         if(VnxParam.EyeSight.Hold == HOLD){
-                            if(AccHoldDurBrake == OFF){
-                                AccHoldDurBrake = ON;
-                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) AccDurB:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, AccHoldDurBrake);
+                            if(OffByBrake == OFF){
+                                OffByBrake = ON;
+                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
                             }
                         }
                     }
@@ -265,7 +265,7 @@ int main(void)
                             }
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_OFF){
-                                    if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && AccHoldDurBrake == OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                    if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && OffByBrake == OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                         AvhControl = AVH_ON;
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                         print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
@@ -321,7 +321,7 @@ int main(void)
                             if((PrevAvhStatus == AVH_HOLD) && (VnxParam.AvhStatus == AVH_ON)){ // AVH_HOLD => AVH_ON
                                 AvhControl = AVH_OFF;
                                 led_blink((VnxParam.AvhStatus << 1) + AvhControl);
-                                dprintf_("# INFO AVH HOLD released. ReBrake:%d AccDurB:%d\n", RepressBrake, AccHoldDurBrake);
+                                dprintf_("# INFO AVH HOLD released. ReBrake:%d ByBrake:%d\n", RepressBrake, OffByBrake);
                             }
                         }
                     }
@@ -405,9 +405,9 @@ int main(void)
                                             
                                             case AVH_ON:
                                                 if(AvhControl == AVH_ON){
-                                                    dprintf_("# ERROR AVH HOLD failed. ReBrake:%d=>1 AccDurB:%d=>1\n", RepressBrake, AccHoldDurBrake);
+                                                    dprintf_("# ERROR AVH HOLD failed. ReBrake:%d=>1 ByBrake:%d=>1\n", RepressBrake, OffByBrake);
                                                     RepressBrake = ON; // Maybe brake was pressed again during engine stop
-                                                    AccHoldDurBrake = ON;
+                                                    // OffByBrake = ON;
                                                     AvhControl = AVH_OFF;
                                                     print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
                                                     led_blink((VnxParam.AvhStatus << 1) + AvhControl);
