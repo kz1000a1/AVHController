@@ -161,6 +161,7 @@ int main(void)
     static float PrevBrake = 0;
     static float MaxBrake = 0;
     static eyesight PrevEyeSight = {OFF, OFF, OFF, UNHOLD};
+    static uint8_t OffByBrake = OFF;
     static param VnxParam;
 
     init_param(&VnxParam);
@@ -372,6 +373,7 @@ int main(void)
                             PrevEyeSight.Acc = OFF;
                             PrevEyeSight.Ready = OFF;
                             PrevEyeSight.Hold = UNHOLD;
+                            OffByBrake = OFF;
                             init_param(&VnxParam);
                             led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                             dprintf_("# INFO ENGINE stop.\n");
