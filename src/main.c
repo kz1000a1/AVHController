@@ -155,7 +155,6 @@ int main(void)
     static uint8_t Retry = 0;
     static uint8_t Led = OFF;
     static uint8_t RepressBrake = OFF;
-    static uint8_t AccHoldDurBrake = OFF;
     static uint8_t PrevSeatBelt = OPEN;
     static float PrevSpeed = 0;
     static float PrevBrake = 0;
@@ -365,7 +364,6 @@ int main(void)
                             PrevAvhStatus = AVH_OFF;
                             Retry = 0;
                             RepressBrake = OFF;
-                            AccHoldDurBrake = OFF;
                             PrevSeatBelt = OPEN;
                             PrevSpeed = 0;
                             PrevBrake = 0;
