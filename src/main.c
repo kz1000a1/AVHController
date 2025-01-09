@@ -221,18 +221,17 @@ int main(void)
                         printf_("# DEBUG Brake:%d.%02d(%d.%02d)%%\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
                     // }
 #endif
+                    if(PrevSpeed != 0.0 && VnxParam.Speed == 0.0 && VnxParam.EyeSight.Acc == ON){
+                        if(OffByBrake == OFF){
+                            OffByBrake = ON;
+                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
+                        }
+                    }
                     
                     if(VnxParam.Brake == 0.0){
                         if(OffByBrake == ON){
                             OffByBrake = OFF;
                             dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
-                        }
-                    } else {
-                        if(VnxParam.EyeSight.Hold == HOLD){
-                            if(OffByBrake == OFF){
-                                OffByBrake = ON;
-                                dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
-                            }
                         }
                     }
 
@@ -301,8 +300,15 @@ int main(void)
                     PreviousCanId = rx_msg_header.StdId;
 #ifdef DEBUG_MODE
                     print_rx_frame(&rx_msg_header, rx_msg_data);
-                    printf_("Switch:%ｄ Acc:%ｄ Ready:%ｄ Hold:%ｄ\n", VnxParam.EyeSight.Switch, VnxParam.EyeSight.Acc, VnxParam.EyeSight.Ready, VnxParam.EyeSight.Hold);
+                    printf_("Switch:%ｄ(%d) Acc:%ｄ(%d) Ready:%ｄ(%d) Hold:%ｄ(%d)\n", VnxParam.EyeSight.Switch, PrevEyeSight.Switch, VnxParam.EyeSight.Acc, PrevEyeSight.Acc, VnxParam.EyeSight.Ready, PrevEyeSight.Ready, VnxParam.EyeSight.Hold, PrevEyeSight.Hold);
 #endif
+                    if(PrevEyeSight.Acc == ON && VnxParam.EyeSight.Acc == OFF && PrevEyeSight.Ready == ON && VnxParam.EyeSight.Ready == OFF && PrevEyeSight.Hold == ON && VnxParam.EyeSight.Hold == OFF){
+                        if(OffByBrake == OFF){
+                            OffByBrake = ON;
+                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
+                        }
+                    }
+                    
                     break;
 
                 case CAN_ID_AVH_STATUS:
