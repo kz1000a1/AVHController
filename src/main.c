@@ -289,6 +289,10 @@ int main(void)
                     break;
 
                 case CAN_ID_EYESIGHT:
+                    PrevEyeSight.Switch = VnxParam.EyeSight.Switch;
+                    PrevEyeSight.Acc = VnxParam.EyeSight.Acc;
+                    PrevEyeSight.Ready = VnxParam.EyeSight.Ready;
+                    PrevEyeSight.Hold = VnxParam.EyeSight.Hold;
                     VnxParam.EyeSight.Switch = ((rx_msg_data[6] & 0x02) == 0x02);
                     VnxParam.EyeSight.Acc = ((rx_msg_data[6] & 0x10) == 0x10);
                     VnxParam.EyeSight.Ready = ((rx_msg_data[7] & 0x20) == 0x20);
