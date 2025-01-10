@@ -224,14 +224,14 @@ int main(void)
                     if(PrevSpeed != 0.0 && VnxParam.Speed == 0.0 && VnxParam.EyeSight.Acc == ON){
                         if(OffByBrake == OFF){
                             OffByBrake = ON;
-                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
+                            dprintf_("# DEBUG ACC:%d(0:OFF,1:ON) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Acc, OffByBrake);
                         }
                     }
                     
                     if(VnxParam.Brake == 0.0){
                         if(OffByBrake == ON){
                             OffByBrake = OFF;
-                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
+                            dprintf_("# DEBUG ACC:%d(0:OFF,1:ON) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Acc, OffByBrake);
                         }
                     }
 
@@ -264,7 +264,7 @@ int main(void)
                             }
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_OFF){
-                                    if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && OffByBrake == OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
+                                    if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight.Hold == UNHOLD && OffByBrake == OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
                                         AvhControl = AVH_ON;
                                         led_blink((VnxParam.AvhStatus << 1) + AvhControl);
                                         print_param(&VnxParam, AvhControl, PrevSpeed, PrevBrake, MaxBrake);
@@ -305,7 +305,7 @@ int main(void)
                     if(PrevEyeSight.Acc == ON && VnxParam.EyeSight.Acc == OFF && PrevEyeSight.Ready == ON && VnxParam.EyeSight.Ready == OFF && PrevEyeSight.Hold == ON && VnxParam.EyeSight.Hold == OFF){
                         if(OffByBrake == OFF){
                             OffByBrake = ON;
-                            dprintf_("# DEBUG EyeSight:%d(0:UNHOLD,1:HOLD) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Hold, OffByBrake);
+                            dprintf_("# DEBUG ACC:%d(%d)(0:OFF,1:ON) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Acc, PrevEyeSight.Acc, OffByBrake);
                         }
                     }
                     
