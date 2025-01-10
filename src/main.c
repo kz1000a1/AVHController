@@ -212,15 +212,9 @@ int main(void)
                         MaxBrake = VnxParam.Brake;
                     }
                     VnxParam.ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
-                    
-#ifdef DEBUG_MODE
-                    if((PrevSpeed == 0.0 && VnxParam.Speed != 0.0) || (PrevSpeed != 0.0 && VnxParam.Speed == 0.0)){
-                        printf_("# DEBUG Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
-                    }
-                    // if((PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake) || (PrevBrake == 0.0 && VnxParam.Brake != 0.0) || (PrevBrake != 0.0 && VnxParam.Brake == 0.0)){
-                        printf_("# DEBUG Brake:%d.%02d(%d.%02d)%%\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100);
-                    // }
-#endif
+
+                    dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+
                     if(PrevSpeed != 0.0 && VnxParam.Speed == 0.0 && VnxParam.EyeSight.Acc == ON){
                         if(OffByBrake == OFF){
                             OffByBrake = ON;
@@ -232,6 +226,10 @@ int main(void)
                         if(OffByBrake == ON){
                             OffByBrake = OFF;
                             dprintf_("# DEBUG ACC:%d(0:OFF,1:ON) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Acc, OffByBrake);
+                        }
+                        if(RepressBrake == ON){
+                            RepressBrake = OFF; // AVH HOLD Available
+                            dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                         }
                     }
 
@@ -256,12 +254,6 @@ int main(void)
                             break;
 
                         case AVH_OFF:
-                            if(RepressBrake == ON){
-                                if(VnxParam.Brake == 0.0){
-                                    RepressBrake = OFF; // AVH HOLD Available
-                                    dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
-                                }
-                            }
                             if(ProgStatus == PROCESSING){
                                 if(AvhControl == AVH_OFF){
                                     if(RepressBrake == OFF && VnxParam.Gear == SHIFT_D && VnxParam.ParkBrake == OFF && VnxParam.Speed == 0.0 && VnxParam.Accel == 0.0 && VnxParam.SeatBelt == CLOSE && VnxParam.Door == CLOSE && VnxParam.EyeSight.Hold == UNHOLD && OffByBrake == OFF && PrevSpeed == 0.0 && PrevBrake < BRAKE_HIGH && BRAKE_HIGH <= VnxParam.Brake){
@@ -273,13 +265,7 @@ int main(void)
                             }
                             break;
                         
-                        case AVH_ON:
-                            if(RepressBrake == ON){
-                                if(VnxParam.Brake == 0.0){
-                                    RepressBrake = OFF; // AVH HOLD Available
-                                    dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
-                                }
-                            }
+                        default: // AVH_ON
                             break;
                             
                     }
