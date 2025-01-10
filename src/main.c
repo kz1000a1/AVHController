@@ -291,7 +291,7 @@ int main(void)
                     if(PrevEyeSight.Acc == ON && VnxParam.EyeSight.Acc == OFF && PrevEyeSight.Ready == ON && VnxParam.EyeSight.Ready == OFF && PrevEyeSight.Hold == ON && VnxParam.EyeSight.Hold == OFF){
                         if(OffByBrake == OFF){
                             OffByBrake = ON;
-                            dprintf_("# DEBUG ACC:%d(%d)(0:OFF,1:ON) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Acc, PrevEyeSight.Acc, OffByBrake);
+                            dprintf_("# DEBUG ByBrake:%d(0:OFF,1:ON)\n", OffByBrake);
                         }
                     }
                     
