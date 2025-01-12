@@ -397,7 +397,7 @@ int main(void)
                                             
                                             case AVH_ON:
                                                 if(AvhControl == AVH_ON){
-                                                    dprintf_("# ERROR AVH HOLD failed. ReBrake:%d=>1 ByBrake:%d=>1\n", RepressBrake, OffByBrake);
+                                                    dprintf_("# ERROR AVH HOLD failed. ReBrake:%d=>1 ByBrake:%d\n", RepressBrake, OffByBrake);
                                                     RepressBrake = ON; // Maybe brake was pressed again during engine stop
                                                     // OffByBrake = ON;
                                                     AvhControl = AVH_OFF;
