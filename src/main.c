@@ -279,7 +279,7 @@ int main(void)
                     PrevEyeSight.Ready = VnxParam.EyeSight.Ready;
                     PrevEyeSight.Hold = VnxParam.EyeSight.Hold;
                     VnxParam.EyeSight.Switch = ((rx_msg_data[6] & 0x02) == 0x02);
-                    VnxParam.EyeSight.Acc = ((rx_msg_data[6] & 0x10) == 0x10);
+                    VnxParam.EyeSight.Acc = ((rx_msg_data[4] & 0x10) == 0x10);
                     VnxParam.EyeSight.Ready = ((rx_msg_data[7] & 0x20) == 0x20);
                     VnxParam.EyeSight.Hold = ((rx_msg_data[7] & 0x10) == 0x10);
 
@@ -288,7 +288,7 @@ int main(void)
                     print_rx_frame(&rx_msg_header, rx_msg_data);
                     printf_("Switch:%d(%d) Acc:%d(%d) Ready:%d(%d) Hold:%d(%d)\n", VnxParam.EyeSight.Switch, PrevEyeSight.Switch, VnxParam.EyeSight.Acc, PrevEyeSight.Acc, VnxParam.EyeSight.Ready, PrevEyeSight.Ready, VnxParam.EyeSight.Hold, PrevEyeSight.Hold);
 #endif
-                    if(PrevEyeSight.Acc == ON && VnxParam.EyeSight.Acc == OFF && PrevEyeSight.Ready == ON && VnxParam.EyeSight.Ready == OFF && PrevEyeSight.Hold == HOLD && VnxParam.EyeSight.Hold == UNHOLD){
+                    if(VnxParam.EyeSight.Acc == OFF && PrevEyeSight.Ready == ON && VnxParam.EyeSight.Ready == OFF && PrevEyeSight.Hold == HOLD && VnxParam.EyeSight.Hold == UNHOLD){
                         if(OffByBrake == OFF){
                             OffByBrake = ON;
                             dprintf_("# DEBUG ByBrake:%d(0:OFF,1:ON)\n", OffByBrake);
