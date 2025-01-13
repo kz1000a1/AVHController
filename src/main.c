@@ -14,6 +14,7 @@
 #include "printf.h"
 #include "subaru_levorg_vnx.h"
 
+/*
 void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
     uint32_t CurrentTime;
 
@@ -24,6 +25,27 @@ void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
         printf_("(%d.%03d000) can0 %03X#", CurrentTime / 1000,
                                            CurrentTime % 1000,
                                            rx_msg_header->StdId);
+        for (uint8_t i=0; i < rx_msg_header->DLC; i++){
+            printf_("%02X", rx_msg_data[i]);
+        }
+        printf_("\n");
+    } else { // Remote Frame
+        printf_("(%d.%03d000) can0 %03X#R%d\n", CurrentTime / 1000,
+                                                CurrentTime % 1000,
+                                                rx_msg_header->StdId,
+                                                rx_msg_header->DLC);
+    }
+}
+*/
+
+void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
+    uint32_t CurrentTime;
+
+    // CurrentTime = HAL_GetTick();
+
+    // Output all received message(s) to CDC port as candump -L
+    if(rx_msg_header->RTR == CAN_RTR_DATA){ // Data Frame
+        printf_("%03X#", rx_msg_header->StdId);
         for (uint8_t i=0; i < rx_msg_header->DLC; i++){
             printf_("%02X", rx_msg_data[i]);
         }
@@ -213,11 +235,12 @@ int main(void)
                     }
                     VnxParam.ParkBrake = ((rx_msg_data[7] & 0xf0) == 0x50);
 
-                    dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                    // dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
 
                     if(PrevSpeed != 0.0 && VnxParam.Speed == 0.0 && VnxParam.EyeSight.Acc == ON){
                         if(OffByBrake == OFF){
                             OffByBrake = ON;
+                            dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                             dprintf_("# DEBUG ACC:%d(0:OFF,1:ON) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Acc, OffByBrake);
                         }
                     }
@@ -225,10 +248,12 @@ int main(void)
                     if(VnxParam.Brake == 0.0){
                         if(OffByBrake == ON){
                             OffByBrake = OFF;
+                            dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                             dprintf_("# DEBUG ACC:%d(0:OFF,1:ON) ByBrake:%d(0:OFF,1:ON)\n", VnxParam.EyeSight.Acc, OffByBrake);
                         }
                         if(RepressBrake == ON){
                             RepressBrake = OFF; // AVH HOLD Available
+                            dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                             dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                         }
                     }
@@ -238,6 +263,7 @@ int main(void)
                             if(RepressBrake == OFF){
                                 if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
                                     RepressBrake = ON; // AVH HOLD shall be released by press brake again
+                                    dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                     dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                                 }
                             }
@@ -286,11 +312,12 @@ int main(void)
                     PreviousCanId = rx_msg_header.StdId;
 #ifdef DEBUG_MODE
                     print_rx_frame(&rx_msg_header, rx_msg_data);
-                    printf_("Switch:%d(%d) Acc:%d(%d) Ready:%d(%d) Hold:%d(%d)\n", VnxParam.EyeSight.Switch, PrevEyeSight.Switch, VnxParam.EyeSight.Acc, PrevEyeSight.Acc, VnxParam.EyeSight.Ready, PrevEyeSight.Ready, VnxParam.EyeSight.Hold, PrevEyeSight.Hold);
+                    // printf_("Switch:%d(%d) Acc:%d(%d) Ready:%d(%d) Hold:%d(%d)\n", VnxParam.EyeSight.Switch, PrevEyeSight.Switch, VnxParam.EyeSight.Acc, PrevEyeSight.Acc, VnxParam.EyeSight.Ready, PrevEyeSight.Ready, VnxParam.EyeSight.Hold, PrevEyeSight.Hold);
 #endif
                     if(VnxParam.EyeSight.Acc == OFF && PrevEyeSight.Ready == ON && VnxParam.EyeSight.Ready == OFF && PrevEyeSight.Hold == HOLD && VnxParam.EyeSight.Hold == UNHOLD){
                         if(OffByBrake == OFF){
                             OffByBrake = ON;
+                            dprintf_("Switch:%d(%d) Acc:%d(%d) Ready:%d(%d) Hold:%d(%d)\n", VnxParam.EyeSight.Switch, PrevEyeSight.Switch, VnxParam.EyeSight.Acc, PrevEyeSight.Acc, VnxParam.EyeSight.Ready, PrevEyeSight.Ready, VnxParam.EyeSight.Hold, PrevEyeSight.Hold);
                             dprintf_("# DEBUG ByBrake:%d(0:OFF,1:ON)\n", OffByBrake);
                         }
                     }
