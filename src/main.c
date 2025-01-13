@@ -253,7 +253,7 @@ int main(void)
                         }
                         if(RepressBrake == ON){
                             RepressBrake = OFF; // AVH HOLD Available
-                            dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                            // dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                             dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                         }
                     }
@@ -263,7 +263,7 @@ int main(void)
                             if(RepressBrake == OFF){
                                 if(PrevBrake == 0.0 && VnxParam.Brake != 0.0){
                                     RepressBrake = ON; // AVH HOLD shall be released by press brake again
-                                    dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
+                                    // dprintf_("# DEBUG Brake:%d.%02d(%d.%02d)%% Speed:%d.%02d(%d.%02d)km/h\n", (int)VnxParam.Brake, (int)(VnxParam.Brake * 100) % 100, (int)PrevBrake, (int)(PrevBrake * 100) % 100, (int)VnxParam.Speed, (int)(VnxParam.Speed * 100) % 100, (int)PrevSpeed, (int)(PrevSpeed * 100) % 100);
                                     dprintf_("# DEBUG AVH:%d(0:OFF,1:ON,3:HOLD) ReBrake:%d(0:OFF,1:ON)\n", VnxParam.AvhStatus, RepressBrake);
                                 }
                             }
