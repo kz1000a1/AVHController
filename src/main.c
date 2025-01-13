@@ -314,7 +314,7 @@ int main(void)
                     print_rx_frame(&rx_msg_header, rx_msg_data);
                     // printf_("Switch:%d(%d) Acc:%d(%d) Ready:%d(%d) Hold:%d(%d)\n", VnxParam.EyeSight.Switch, PrevEyeSight.Switch, VnxParam.EyeSight.Acc, PrevEyeSight.Acc, VnxParam.EyeSight.Ready, PrevEyeSight.Ready, VnxParam.EyeSight.Hold, PrevEyeSight.Hold);
 #endif
-                    if(VnxParam.EyeSight.Acc == OFF && PrevEyeSight.Ready == ON && VnxParam.EyeSight.Ready == OFF && PrevEyeSight.Hold == HOLD && VnxParam.EyeSight.Hold == UNHOLD){
+                    if(VnxParam.EyeSight.Acc == OFF && PrevEyeSight.Ready == ON && VnxParam.EyeSight.Ready == OFF && PrevEyeSight.Hold == HOLD && VnxParam.EyeSight.Hold == UNHOLD && VnxParam.Speed == 0.0){
                         if(OffByBrake == OFF){
                             OffByBrake = ON;
                             dprintf_("Switch:%d(%d) Acc:%d(%d) Ready:%d(%d) Hold:%d(%d)\n", VnxParam.EyeSight.Switch, PrevEyeSight.Switch, VnxParam.EyeSight.Acc, PrevEyeSight.Acc, VnxParam.EyeSight.Ready, PrevEyeSight.Ready, VnxParam.EyeSight.Hold, PrevEyeSight.Hold);
