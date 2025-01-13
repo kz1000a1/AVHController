@@ -39,7 +39,7 @@ void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
 */
 
 void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
-    uint32_t CurrentTime;
+    // uint32_t CurrentTime;
 
     // CurrentTime = HAL_GetTick();
 
@@ -51,10 +51,7 @@ void print_rx_frame(CAN_RxHeaderTypeDef* rx_msg_header, uint8_t* rx_msg_data){
         }
         printf_("\n");
     } else { // Remote Frame
-        printf_("(%d.%03d000) can0 %03X#R%d\n", CurrentTime / 1000,
-                                                CurrentTime % 1000,
-                                                rx_msg_header->StdId,
-                                                rx_msg_header->DLC);
+        printf_("%03X#R%d\n", rx_msg_header->StdId, rx_msg_header->DLC);
     }
 }
 
