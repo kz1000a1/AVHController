@@ -222,7 +222,7 @@ int main(void)
                 case CAN_ID_SPEED:
                     PrevSpeed = VnxParam.Speed;
                     PrevBrake = VnxParam.Brake;
-                    VnxParam.Speed = (rx_msg_data[2] + ((rx_msg_data[3] & 0x1f) << 8)) * 0.05625;
+                    VnxParam.Speed = (rx_msg_data[2] + ((rx_msg_data[3] & 0x1f) << 8)) * 0.015694 * 3.6;
                     VnxParam.Brake = rx_msg_data[5] / 0.8;
                     if(100 < VnxParam.Brake){
                         VnxParam.Brake = 100;
